@@ -153,14 +153,14 @@ class BlogCategory(BlogMetaMixin, TranslatableModel):
         if self.has_translation(lang):
             slug = self.safe_translation_getter('slug', language_code=lang)
             return reverse(
-                '%s:posts-category' % self.app_config.namespace,
+                'djangocms_blog:posts-category',
                 kwargs={'category': slug},
                 current_app=self.app_config.namespace
             )
         # in case category doesn't exist in this language, gracefully fallback
         # to posts-latest
         return reverse(
-            '%s:posts-latest' % self.app_config.namespace, current_app=self.app_config.namespace
+            'djangocms_blog:posts-latest', current_app=self.app_config.namespace
         )
 
     def __str__(self):
@@ -353,9 +353,8 @@ class Post(KnockerModel, BlogMetaMixin, TranslatableModel):
                     'slug', language_code=lang, any_language=True
                 )  # NOQA
             if '<category>' in urlconf:
-                kwargs['category'] = category.safe_translation_getter(
-                    'slug', language_code=lang, any_language=True)  # NOQA
-            return reverse('%s:post-detail' % self.app_config.namespace, kwargs=kwargs)
+                kwargs['category'] = category.safe_translation_getter('slug', language_code=lang, any_language=True)  # NOQA
+            return reverse('djangocms_blog:post-detail', kwargs=kwargs)
 
     def get_title(self):
         title = self.safe_translation_getter('meta_title', any_language=True)
