@@ -47,7 +47,6 @@ thumbnail_model = '%s.%s' % (
     ThumbnailOption._meta.app_label, ThumbnailOption.__name__
 )
 
-
 try:
     from knocker.mixins import KnockerModel
 except ImportError:
@@ -372,7 +371,8 @@ class Post(KnockerModel, ModelMeta, TranslatableModel):
             if '<slug>' in urlconf:
                 kwargs['slug'] = self.safe_translation_getter('slug', language_code=lang, any_language=True)  # NOQA
             if '<category>' in urlconf:
-                kwargs['category'] = category.safe_translation_getter('slug', language_code=lang, any_language=True)  # NOQA
+                kwargs['category'] = category.safe_translation_getter('slug', language_code=lang,
+                                                                      any_language=True)  # NOQA
             return reverse('djangocms_blog:post-detail', kwargs=kwargs)
 
     def get_meta_attribute(self, param):
@@ -480,6 +480,72 @@ class Post(KnockerModel, ModelMeta, TranslatableModel):
 
     def get_hits(self):
         return self.hits
+
+    def es_serialize(self, languages):
+        translated_post_fields = {}
+        for lang_code, lang_full_name in languages:
+            self.set_current_language(lang_code)
+            self.activate_language(lang_code)
+            translated_post_fields[lang_code] = {
+                "title": self.title,
+                "slug": self.slug,
+            }
+        serializer = {
+            "id": self.id,
+            "absolute_url": self.get_absolute_url(),
+            "translated_post_fields": translated_post_fields,
+            "author": self.author if {"first_name": self.author.first_name, "last_name": self.author.last_name,
+                                           "email": self.author.email} else "",
+            "cover": self.main_image.url if self.main_image.url else "",
+            # only works for Text Generic Plugin
+            "content": strip_tags(self.content.cmsplugin_set.all().first().djangocms_text_ckeditor_text.body),
+            "category": [
+
+            ],
+            "tags": [
+
+            ],
+            "date_created": self.date_created.isoformat() if self.date_created else "",
+            "date_published": self.date_published.isoformat() if self.date_published else "",
+            "date_modified": self.date_modified.isoformat() if self.date_modified else "",
+            "recommended": self.recommended,
+            "keywords": self.keywords if self.keywords else "",
+            "hits": self.hits
+        }
+
+        for category in self.categories.all():
+            translated_category_fields = {}
+            for lang_code, lang_full_name in languages:
+                category.set_current_language(lang_code)
+                category.activate_language(lang_code)
+                translated_category_fields[lang_code] = {
+                    "name": category.name,
+                }
+            serializer["category"].append(
+                {
+                    "translated_category_fields": translated_category_fields,
+                    "url": category.get_absolute_url()
+                }
+            )
+        for tag in self.tags.all():
+            serializer["tags"].append(
+                {
+                    "name": tag.name,
+                    "url": reverse('djangocms_blog:posts-tagged', kwargs={'tag': tag.slug})
+                }
+            )
+
+        return serializer
+
+    def add_category(self, field, order, mode):
+        sort = {
+            field: {
+                "order": order,
+                "mode": mode
+            }
+        }
+        self._query_object['sort'].append(sort)
+        return sort
 
 
 class BasePostPlugin(CMSPlugin):
@@ -595,7 +661,6 @@ class AuthorEntriesPlugin(BasePostPlugin):
 
 @python_2_unicode_compatible
 class GenericBlogPlugin(BasePostPlugin):
-
     class Meta:
         abstract = False
 
