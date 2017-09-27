@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, unicode_literals
-
+import json
 import hashlib
 
 import django
@@ -481,24 +481,18 @@ class Post(KnockerModel, ModelMeta, TranslatableModel):
     def get_hits(self):
         return self.hits
 
-    def es_serialize(self, languages):
-        translated_post_fields = {}
-        for lang_code, lang_full_name in languages:
-            self.set_current_language(lang_code)
-            self.activate_language(lang_code)
-            translated_post_fields[lang_code] = {
-                "title": self.title,
-                "slug": self.slug,
-            }
+    def es_serialize(self):
+
         serializer = {
             "id": self.id,
+            "title": self.title,
+            "slug": self.slug,
             "absolute_url": self.get_absolute_url(),
-            "translated_post_fields": translated_post_fields,
-            "author": self.author if {"first_name": self.author.first_name, "last_name": self.author.last_name,
-                                           "email": self.author.email} else "",
-            "cover": self.main_image.url if self.main_image.url else "",
+            "author": {"first_name": self.author.first_name, "last_name": self.author.last_name,
+                                           "email": self.author.email} if self.author else "",
+            "cover": self.main_image.url if self.main_image else "",
             # only works for Text Generic Plugin
-            "content": strip_tags(self.content.cmsplugin_set.all().first().djangocms_text_ckeditor_text.body),
+            "content": strip_tags(self.content.cmsplugin_set.all().first().djangocms_text_ckeditor_text.body) if self.content.cmsplugin_set.all().first() else "",
             "category": [
 
             ],
@@ -514,16 +508,9 @@ class Post(KnockerModel, ModelMeta, TranslatableModel):
         }
 
         for category in self.categories.all():
-            translated_category_fields = {}
-            for lang_code, lang_full_name in languages:
-                category.set_current_language(lang_code)
-                category.activate_language(lang_code)
-                translated_category_fields[lang_code] = {
-                    "name": category.name,
-                }
             serializer["category"].append(
                 {
-                    "translated_category_fields": translated_category_fields,
+                    "name": category.name,
                     "url": category.get_absolute_url()
                 }
             )
@@ -534,18 +521,9 @@ class Post(KnockerModel, ModelMeta, TranslatableModel):
                     "url": reverse('djangocms_blog:posts-tagged', kwargs={'tag': tag.slug})
                 }
             )
-
-        return serializer
-
-    def add_category(self, field, order, mode):
-        sort = {
-            field: {
-                "order": order,
-                "mode": mode
-            }
-        }
-        self._query_object['sort'].append(sort)
-        return sort
+        serialized = ""
+        serialized += json.dumps(serializer) + '\n'
+        return serialized
 
 
 class BasePostPlugin(CMSPlugin):
