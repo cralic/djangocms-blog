@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, unicode_literals
-
+import json
 import hashlib
 
 import django
@@ -46,7 +46,6 @@ except ImportError:  # pragma: no cover
 thumbnail_model = '%s.%s' % (
     ThumbnailOption._meta.app_label, ThumbnailOption.__name__
 )
-
 
 try:
     from knocker.mixins import KnockerModel
@@ -268,6 +267,11 @@ class Post(KnockerModel, ModelMeta, TranslatableModel):
         verbose_name=_('Recommended')
     )
 
+    pinned = models.BooleanField(
+        default=False,
+        verbose_name=_('Pinned')
+    )
+
     keywords = models.CharField(
         max_length=400,
         blank=True,
@@ -372,7 +376,8 @@ class Post(KnockerModel, ModelMeta, TranslatableModel):
             if '<slug>' in urlconf:
                 kwargs['slug'] = self.safe_translation_getter('slug', language_code=lang, any_language=True)  # NOQA
             if '<category>' in urlconf:
-                kwargs['category'] = category.safe_translation_getter('slug', language_code=lang, any_language=True)  # NOQA
+                kwargs['category'] = category.safe_translation_getter('slug', language_code=lang,
+                                                                      any_language=True)  # NOQA
             return reverse('djangocms_blog:post-detail', kwargs=kwargs)
 
     def get_meta_attribute(self, param):
@@ -480,6 +485,51 @@ class Post(KnockerModel, ModelMeta, TranslatableModel):
 
     def get_hits(self):
         return self.hits
+
+    def es_serialize(self):
+
+        serializer = {
+            "id": self.id,
+            "title": self.title,
+            "slug": self.slug,
+            "absolute_url": self.get_absolute_url(),
+            "author": {"first_name": self.author.first_name, "last_name": self.author.last_name,
+                                           "email": self.author.email} if self.author else "",
+            "cover": self.main_image.url if self.main_image else "",
+            # only works for Text Generic Plugin
+            "content": strip_tags(self.content.cmsplugin_set.all().first().djangocms_text_ckeditor_text.body) if self.content.cmsplugin_set.all().first() else "",
+            "category": [
+
+            ],
+            "tags": [
+
+            ],
+            "date_created": self.date_created.isoformat() if self.date_created else "",
+            "date_published": self.date_published.isoformat() if self.date_published else "",
+            "date_modified": self.date_modified.isoformat() if self.date_modified else "",
+            "recommended": self.recommended,
+            "pinned": self.pinned,
+            "keywords": self.keywords if self.keywords else "",
+            "hits": self.hits
+        }
+
+        for category in self.categories.all():
+            serializer["category"].append(
+                {
+                    "name": category.name,
+                    "url": category.get_absolute_url()
+                }
+            )
+        for tag in self.tags.all():
+            serializer["tags"].append(
+                {
+                    "name": tag.name,
+                    "url": reverse('djangocms_blog:posts-tagged', kwargs={'tag': tag.slug})
+                }
+            )
+        serialized = ""
+        serialized += json.dumps(serializer) + '\n'
+        return serialized
 
 
 class BasePostPlugin(CMSPlugin):
@@ -595,7 +645,6 @@ class AuthorEntriesPlugin(BasePostPlugin):
 
 @python_2_unicode_compatible
 class GenericBlogPlugin(BasePostPlugin):
-
     class Meta:
         abstract = False
 

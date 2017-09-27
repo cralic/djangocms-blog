@@ -2,7 +2,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 from django.conf.urls import url
-
+from django.utils.translation import ugettext_lazy as _
 from .feeds import FBInstantArticles, LatestEntriesFeed, TagFeed
 from .settings import get_setting
 from .views import (
@@ -26,11 +26,11 @@ detail_urls = get_urls()
 urlpatterns = [
     url(r'^$',
         PostListView.as_view(), name='posts-latest'),
-    url(r'^najcitanejsie/$',
+    url(_(r'^most_read/$'),
         MostReadPostsView.as_view(), name='posts-most-read'),
-    url(r'^odporucane/$',
+    url(_(r'^recommended/$'),
         RecommendedPostsView.as_view(), name='posts-recommended'),
-    url(r'^najnovsie/$',
+    url(_(r'^newest/$'),
         FavouritesPostsView.as_view(), name='posts-newest'),
     url(r'^feed/$',
         LatestEntriesFeed(), name='posts-latest-feed'),
