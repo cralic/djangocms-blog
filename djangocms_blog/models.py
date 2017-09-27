@@ -267,6 +267,11 @@ class Post(KnockerModel, ModelMeta, TranslatableModel):
         verbose_name=_('Recommended')
     )
 
+    pinned = models.BooleanField(
+        default=False,
+        verbose_name=_('Pinned')
+    )
+
     keywords = models.CharField(
         max_length=400,
         blank=True,
@@ -503,6 +508,7 @@ class Post(KnockerModel, ModelMeta, TranslatableModel):
             "date_published": self.date_published.isoformat() if self.date_published else "",
             "date_modified": self.date_modified.isoformat() if self.date_modified else "",
             "recommended": self.recommended,
+            "pinned": self.pinned,
             "keywords": self.keywords if self.keywords else "",
             "hits": self.hits
         }
