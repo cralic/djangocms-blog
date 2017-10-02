@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-27 18:47+0200\n"
+"POT-Creation-Date: 2017-10-02 11:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -57,7 +57,8 @@ msgstr "Meta"
 #: cmsblog/djangocms_blog/admin.py:343 cmsblog/djangocms_blog/admin.py:351
 #: cmsblog/djangocms_blog/admin.py:359
 msgid "You can provide plain strings, Post model attribute or method names"
-msgstr "Môžete poskytnúť jednoduché reťazce, atribút Post modelu alebo názvy metód"
+msgstr ""
+"Môžete poskytnúť jednoduché reťazce, atribút Post modelu alebo názvy metód"
 
 #: cmsblog/djangocms_blog/apps.py:15
 msgid "django CMS Blog"
@@ -209,7 +210,9 @@ msgstr "Pošli notifikáciu po zverejnení"
 
 #: cmsblog/djangocms_blog/cms_appconfig.py:136
 msgid "Emits a desktop notification -if enabled- when publishing a new post"
-msgstr "Uskutoční desktopová notifikácia - ak je to povolené - po zverejnení nového postu"
+msgstr ""
+"Uskutoční desktopová notifikácia - ak je to povolené - po zverejnení nového "
+"postu"
 
 #: cmsblog/djangocms_blog/cms_appconfig.py:139
 msgid "Send notifications on post update"
@@ -217,7 +220,8 @@ msgstr "Pošli notifikáciu po aktualizácii"
 
 #: cmsblog/djangocms_blog/cms_appconfig.py:140
 msgid "Emits a desktop notification -if enabled- when editing a published post"
-msgstr "Uskutoční desktopová notifikácia - ak je to povolené - po aktualizácii postu"
+msgstr ""
+"Uskutoční desktopová notifikácia - ak je to povolené - po aktualizácii postu"
 
 #: cmsblog/djangocms_blog/cms_apps.py:16
 #: cmsblog/djangocms_blog/cms_toolbars.py:21
@@ -263,7 +267,7 @@ msgstr "z %s"
 #: cmsblog/djangocms_blog/cms_toolbars.py:98
 #, python-format
 msgid "Are you sure you want to copy all plugins from %s?"
-msgstr "Ste si istý že si chcete skopírovať všetky doplnky (plugin)"
+msgstr "Ste si istý že si chcete skopírovať všetky doplnky (plugin)%s?"
 
 #: cmsblog/djangocms_blog/cms_wizards.py:58
 #, python-brace-format
@@ -432,7 +436,9 @@ msgstr "Stránka(s)"
 msgid ""
 "Select sites in which to show the post. If none is set it will be visible in "
 "all the configured sites."
-msgstr "Vyberte stránky, na ktorých sa príspevok zobrazí. Ak nie je nastavená žiadná, bude viditeľné na všetkých nakonfigurovaných stránkach."
+msgstr ""
+"Vyberte stránky, na ktorých sa príspevok zobrazí. Ak nie je nastavená "
+"žiadná, bude viditeľné na všetkých nakonfigurovaných stránkach."
 
 #: cmsblog/djangocms_blog/models.py:238
 msgid "abstract"
@@ -732,7 +738,7 @@ msgid "^(?P<year>\\d{4})/(?P<month>\\d{1,2})/$"
 msgstr "^(?P<year>\\d{4})/(?P<month>\\d{1,2})/$"
 
 #: cmsblog/djangocms_blog/urls.py:43
-msgid "^autor/(?P<username>[\\w\\.@+-]+)/$"
+msgid "^author/(?P<username>[\\w\\.@+-]+)/$"
 msgstr "^autor/(?P<username>[\\w\\.@+-]+)/$"
 
 #: cmsblog/djangocms_blog/urls.py:45
