@@ -71,8 +71,7 @@ class BlogCategory(ModelMeta, TranslatableModel):
         BlogConfig, null=True, verbose_name=_('app. config')
     )
 
-    main_image = models.ImageField(
-        upload_to='blog_category_image',
+    main_image = FilerImageField(
         verbose_name=_('Blog category image'),
         blank=True,
         null=True
