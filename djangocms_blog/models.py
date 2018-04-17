@@ -280,7 +280,7 @@ class Post(KnockerModel, ModelMeta, TranslatableModel):
     )
 
     _metadata = {
-        'title': 'get_title',
+        'title': 'get_meta_title',
         'description': 'get_description',
         'keywords': 'get_keywords',
         'og_description': 'get_description',
@@ -390,6 +390,10 @@ class Post(KnockerModel, ModelMeta, TranslatableModel):
         title = self.safe_translation_getter('meta_title', any_language=True)
         if not title:
             title = self.safe_translation_getter('title', any_language=True)
+        return title.strip()
+    
+    def get_meta_title(self):
+        title = self.get_title()
         return "{} | {}".format(title.strip(), Site.objects.get_current())
 
     def get_keywords(self):
