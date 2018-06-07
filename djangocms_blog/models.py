@@ -391,7 +391,7 @@ class Post(KnockerModel, ModelMeta, TranslatableModel):
         if not title:
             title = self.safe_translation_getter('title', any_language=True)
         return title.strip()
-    
+
     def get_meta_title(self):
         title = self.get_title()
         return "{} | {}".format(title.strip(), Site.objects.get_current())
@@ -497,7 +497,7 @@ class Post(KnockerModel, ModelMeta, TranslatableModel):
             "slug": self.slug,
             "absolute_url": self.get_absolute_url(),
             "author": {"first_name": self.author.first_name, "last_name": self.author.last_name,
-                                           "email": self.author.email} if self.author else "",
+                       "email": self.author.email} if self.author else "",
             "cover": self.main_image.url if self.main_image else "",
             # only works for Text Generic Plugin
             "content": strip_tags(self.content.cmsplugin_set.all().first().djangocms_text_ckeditor_text.body) if self.content.cmsplugin_set.all().first() else "",
@@ -572,7 +572,7 @@ class BasePostPlugin(CMSPlugin):
             posts = posts.on_site(get_current_site(request))
         posts = posts.active_translations(language_code=language)
         if (published_only or not request or not getattr(request, 'toolbar', False) or
-                not request.toolbar.edit_mode):
+            not request.toolbar.edit_mode):
             posts = posts.published(current_site=self.current_site)
         return self.optimize(posts.all())
 
@@ -606,6 +606,21 @@ class LatestPostsPlugin(BasePostPlugin):
         if self.categories.exists():
             posts = posts.filter(categories__in=list(self.categories.all()))
         return self.optimize(posts.distinct())[:self.latest_posts]
+
+
+@python_2_unicode_compatible
+class MostReadPlugin(BasePostPlugin):
+    most_read_posts = models.IntegerField(_('articles'), default=get_setting('LATEST_POSTS'),
+                                          help_text=_('The number of latests '
+                                                      'articles to be displayed.'))
+
+    def __str__(self):
+        return force_text(_('%s most read articles by tag') % self.most_read_posts)
+
+    def get_posts(self, request, published_only=True):
+        posts = self.post_queryset(request, published_only).distinct()
+        posts = sorted(posts, key=lambda x: x.get_hits(), reverse=True)
+        return posts[:self.most_read_posts]
 
 
 @python_2_unicode_compatible

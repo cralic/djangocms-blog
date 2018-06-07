@@ -9,7 +9,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.db import models
 
 from .forms import LatestEntriesForm
-from .models import AuthorEntriesPlugin, BlogCategory, GenericBlogPlugin, LatestPostsPlugin, Post
+from .models import AuthorEntriesPlugin, BlogCategory, GenericBlogPlugin, LatestPostsPlugin, Post, MostReadPlugin
 from .settings import get_setting
 
 
@@ -37,7 +37,7 @@ class BlogLatestEntriesPlugin(BlogPlugin):
     form = LatestEntriesForm
     filter_horizontal = ('categories',)
     fields = ['app_config', 'latest_posts', 'tags', 'categories'] + \
-        ['template_folder'] if len(get_setting('PLUGIN_TEMPLATE_FOLDERS')) > 1 else []
+             ['template_folder'] if len(get_setting('PLUGIN_TEMPLATE_FOLDERS')) > 1 else []
     cache = False
     base_render_template = 'latest_entries.html'
 
@@ -57,12 +57,29 @@ class BlogLatestEntriesPluginCached(BlogPlugin):
     form = LatestEntriesForm
     filter_horizontal = ('categories',)
     fields = ['app_config', 'latest_posts', 'tags', 'categories'] + \
-        ['template_folder'] if len(get_setting('PLUGIN_TEMPLATE_FOLDERS')) > 1 else []
+             ['template_folder'] if len(get_setting('PLUGIN_TEMPLATE_FOLDERS')) > 1 else []
     base_render_template = 'latest_entries.html'
 
     def render(self, context, instance, placeholder):
         context = super(BlogLatestEntriesPluginCached, self).render(context, instance, placeholder)
         context['posts_list'] = instance.get_posts(context['request'])
+        context['TRUNCWORDS_COUNT'] = get_setting('POSTS_LIST_TRUNCWORDS_COUNT')
+        return context
+
+
+class BlogMostReadPlugin(BlogPlugin):
+    """
+    Non cached plugin which returns the latest posts taking into account the
+      user / toolbar state
+    """
+    name = get_setting('MOST_READ_PLUGIN_NAME')
+    model = MostReadPlugin
+    cache = False
+    base_render_template = 'most_read.html'
+
+    def render(self, context, instance, placeholder):
+        context = super(BlogMostReadPlugin, self).render(context, instance, placeholder)
+        context['posts_list'] = instance.get_posts(context['request'], published_only=False)
         context['TRUNCWORDS_COUNT'] = get_setting('POSTS_LIST_TRUNCWORDS_COUNT')
         return context
 
@@ -132,6 +149,7 @@ class BlogArchivePlugin(BlogPlugin):
 
 plugin_pool.register_plugin(BlogLatestEntriesPlugin)
 plugin_pool.register_plugin(BlogLatestEntriesPluginCached)
+plugin_pool.register_plugin(BlogMostReadPlugin)
 plugin_pool.register_plugin(BlogAuthorPostsPlugin)
 plugin_pool.register_plugin(BlogTagsPlugin)
 plugin_pool.register_plugin(BlogArchivePlugin)

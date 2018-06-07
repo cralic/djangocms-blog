@@ -115,6 +115,8 @@ def get_setting(name):
         'BLOG_PLUGIN_MODULE_NAME': getattr(settings, 'BLOG_PLUGIN_MODULE_NAME', _('Blog')),
         'BLOG_LATEST_ENTRIES_PLUGIN_NAME': getattr(
             settings, 'BLOG_LATEST_ENTRIES_PLUGIN_NAME', _('Latest Blog Articles')),
+        'BLOG_MOST_READ_PLUGIN_NAME': getattr(
+            settings, 'BLOG_MOST_READ_PLUGIN_NAME', _('Most Read Blog Articles')),
         'BLOG_LATEST_ENTRIES_PLUGIN_NAME_CACHED': getattr(
             settings, 'BLOG_LATEST_ENTRIES_PLUGIN_NAME_CACHED', _('Latest Blog Articles - Cache')),
         'BLOG_AUTHOR_POSTS_PLUGIN_NAME': getattr(

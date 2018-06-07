@@ -11,7 +11,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
 from django.db import transaction
-from django.http import HttpResponseBadRequest, HttpResponse
+from django.http import HttpResponseBadRequest, HttpResponse, JsonResponse
 from django.utils.encoding import force_text
 from django.utils.timezone import now
 from django.utils.translation import get_language
@@ -158,7 +158,7 @@ class RecommendedPostsView(PostListView):
         query = Post.objects.filter(recommended=True).order_by('-date_published')
         self.count = query.count()
         if self.request.is_ajax():
-            query = query[self.get_offset(self.request):(self.get_offset(self.request)+self.get_limit(self.request))]
+            query = query[self.get_offset(self.request):(self.get_offset(self.request) + self.get_limit(self.request))]
         return query
 
     def get_context_data(self, **kwargs):
@@ -174,7 +174,7 @@ class MostReadPostsView(PostListView):
         query = sorted(Post.objects.all(), key=lambda x: x.get_hits(), reverse=True)
         self.count = Post.objects.all()
         if self.request.is_ajax():
-            query = query[self.get_offset(self.request):(self.get_offset(self.request)+self.get_limit(self.request))]
+            query = query[self.get_offset(self.request):(self.get_offset(self.request) + self.get_limit(self.request))]
         return query
 
     def get_context_data(self, **kwargs):
@@ -190,7 +190,7 @@ class FavouritesPostsView(PostListView):
         query = Post.objects.all().order_by('-date_created')
         self.count = query.count()
         if self.request.is_ajax():
-            query = query[self.get_offset(self.request):(self.get_offset(self.request)+self.get_limit(self.request))]
+            query = query[self.get_offset(self.request):(self.get_offset(self.request) + self.get_limit(self.request))]
         return query
 
     def get_context_data(self, **kwargs):
