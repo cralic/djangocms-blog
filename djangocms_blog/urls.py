@@ -26,6 +26,8 @@ detail_urls = get_urls()
 urlpatterns = [
     url(r'^$',
         PostListView.as_view(), name='posts-latest'),
+    url(_(r'^all/$'),
+        PostListView.as_view(), name='posts-latest-all'),
     url(_(r'^most_read/$'),
         MostReadPostsView.as_view(), name='posts-most-read'),
     url(_(r'^recommended/$'),

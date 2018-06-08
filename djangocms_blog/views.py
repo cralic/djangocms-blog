@@ -164,7 +164,7 @@ class RecommendedPostsView(PostListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
-            'list_name': 'Odporúčané'
+            'list_name': _('Recommended')
         })
         return context
 
@@ -180,7 +180,7 @@ class MostReadPostsView(PostListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
-            'list_name': 'Najčítanejšie'
+            'list_name': _('Most read')
         })
         return context
 
@@ -196,7 +196,7 @@ class FavouritesPostsView(PostListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
-            'list_name': 'Najnovšie'
+            'list_name': _('Newest')
         })
         return context
 
