@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-02 11:35+0200\n"
+"POT-Creation-Date: 2018-06-11 13:36+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,421 +18,428 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
-#: cmsblog/djangocms_blog/admin.py:34
+#: djangocms-blog/djangocms_blog/admin.py:34
 msgid "site"
 msgstr "Stránka"
 
-#: cmsblog/djangocms_blog/admin.py:94
+#: djangocms-blog/djangocms_blog/admin.py:94
 msgid "Info"
 msgstr "Informácie"
 
-#: cmsblog/djangocms_blog/admin.py:100
+#: djangocms-blog/djangocms_blog/admin.py:100
 msgid "Images"
 msgstr "Obrázky"
 
-#: cmsblog/djangocms_blog/admin.py:104
+#: djangocms-blog/djangocms_blog/admin.py:104
 msgid "SEO"
 msgstr "SEO"
 
-#: cmsblog/djangocms_blog/admin.py:307
+#: djangocms-blog/djangocms_blog/admin.py:307
 msgid "Generic"
 msgstr "Generický"
 
-#: cmsblog/djangocms_blog/admin.py:313
+#: djangocms-blog/djangocms_blog/admin.py:313
 msgid "Layout"
 msgstr "Rozloženie"
 
-#: cmsblog/djangocms_blog/admin.py:320
+#: djangocms-blog/djangocms_blog/admin.py:320
 msgid "Notifications"
 msgstr "Notifikácie"
 
-#: cmsblog/djangocms_blog/admin.py:326
+#: djangocms-blog/djangocms_blog/admin.py:326
 msgid "Sitemap"
 msgstr "Mapa stránky"
 
-#: cmsblog/djangocms_blog/admin.py:332
+#: djangocms-blog/djangocms_blog/admin.py:332
 msgid "Meta"
 msgstr "Meta"
 
-#: cmsblog/djangocms_blog/admin.py:343 cmsblog/djangocms_blog/admin.py:351
-#: cmsblog/djangocms_blog/admin.py:359
+#: djangocms-blog/djangocms_blog/admin.py:343
+#: djangocms-blog/djangocms_blog/admin.py:351
+#: djangocms-blog/djangocms_blog/admin.py:359
 msgid "You can provide plain strings, Post model attribute or method names"
 msgstr ""
 "Môžete poskytnúť jednoduché reťazce, atribút Post modelu alebo názvy metód"
 
-#: cmsblog/djangocms_blog/apps.py:15
+#: djangocms-blog/djangocms_blog/apps.py:15
 msgid "django CMS Blog"
 msgstr "django CMS Blog"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:20
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:20
 msgid "application title"
 msgstr "nadpis aplikácie"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:22
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:22
 msgid "object name"
 msgstr "názov objektu"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:27
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:27
 msgid "blog config"
 msgstr "konfigurácia blogu"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:28
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:28
 msgid "blog configs"
 msgstr "konfigurácie blogu"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:31
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:31
 msgid "untitled"
 msgstr "bez názvu"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:36
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:36
 msgid "Post published by default"
 msgstr "Predvolene uverejnený príspevok"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:40
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:40
 msgid "Permalink structure"
 msgstr "Štruktúra permalinky"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:45
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:45
 msgid "Use placeholder and plugins for article body"
 msgstr "Použi zástupný symbol (placeholder) a doplnky (plugin) pre telo článku"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:49
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:49
 msgid "Use abstract field"
 msgstr "Použi abstraktné pole"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:53
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:53
 msgid "Set author"
 msgstr "Nastav autora"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:53
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:53
 msgid "Set author by default"
 msgstr "Predvolené nastavenie autora"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:57
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:57
 msgid "Paginate size"
 msgstr "Veľkosť stránkovania"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:58
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:58
 msgid "When paginating list views, how many articles per page?"
 msgstr "Pri stránkovaní pohľadov, koľko článkov na stránku?"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:61
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:61
 msgid "Template prefix"
 msgstr "Predpona šablóny"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:62
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:62
 msgid "Alternative directory to load the blog templates from"
 msgstr "Alternatívny adresár na načítanie šablón blogov"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:65
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:65
 msgid "Menu structure"
 msgstr "Štruktúra ponuky"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:67
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:67
 msgid "Structure of the django CMS menu"
 msgstr "Štruktúra django CMS ponuky"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:70
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:70
 msgid "Show empty categories in menu"
 msgstr "Zobraz prázdne kategórie v ponuke"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:72
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:72
 msgid "Show categories with no post attached in the menu"
 msgstr "Zobraz v ponuke kategórie, ktoré sú bez príspevkov"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:75
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:75
 msgid "Sitemap changefreq"
 msgstr "Frekvencia zmien mapy stránky"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:78
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:78
 msgid "Changefreq attribute for sitemap items"
 msgstr "Atribúr frekvencie zmien mapy stránky"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:81
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:81
 msgid "Sitemap priority"
 msgstr "Priorita mapy stránky"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:83
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:83
 msgid "Priority attribute for sitemap items"
 msgstr "Atribút priority mapy stránky"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:86
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:86
 msgid "Object type"
 msgstr "Typ objektu"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:90
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:90
 msgid "Facebook type"
 msgstr "Typ Facebooku"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:94
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:94
 msgid "Facebook application ID"
 msgstr "ID Facebook aplikácie"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:98
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:98
 msgid "Facebook profile ID"
 msgstr "ID Facebook profilu"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:102
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:102
 msgid "Facebook page URL"
 msgstr "URL stránky Facebook"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:106
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:106
 msgid "Facebook author URL"
 msgstr "Facebook autor URL"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:110
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:110
 msgid "Facebook author"
 msgstr "Facebook autor"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:114
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:114
 msgid "Twitter type"
 msgstr "Twitter typ"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:118
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:118
 msgid "Twitter site handle"
 msgstr "Správa stránok Twitter"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:122
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:122
 msgid "Twitter author handle"
 msgstr "Správa autorov Twitter"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:126
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:126
 msgid "Google+ type"
 msgstr "Google+ typ"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:130
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:130
 msgid "Google+ author name"
 msgstr "Google+ meno autora"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:135
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:135
 msgid "Send notifications on post publish"
 msgstr "Pošli notifikáciu po zverejnení"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:136
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:136
 msgid "Emits a desktop notification -if enabled- when publishing a new post"
 msgstr ""
 "Uskutoční desktopová notifikácia - ak je to povolené - po zverejnení nového "
 "postu"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:139
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:139
 msgid "Send notifications on post update"
 msgstr "Pošli notifikáciu po aktualizácii"
 
-#: cmsblog/djangocms_blog/cms_appconfig.py:140
+#: djangocms-blog/djangocms_blog/cms_appconfig.py:140
 msgid "Emits a desktop notification -if enabled- when editing a published post"
 msgstr ""
 "Uskutoční desktopová notifikácia - ak je to povolené - po aktualizácii postu"
 
-#: cmsblog/djangocms_blog/cms_apps.py:16
-#: cmsblog/djangocms_blog/cms_toolbars.py:21
-#: cmsblog/djangocms_blog/cms_toolbars.py:82
-#: cmsblog/djangocms_blog/settings.py:115
+#: djangocms-blog/djangocms_blog/cms_apps.py:16
+#: djangocms-blog/djangocms_blog/cms_toolbars.py:21
+#: djangocms-blog/djangocms_blog/cms_toolbars.py:82
+#: djangocms-blog/djangocms_blog/settings.py:115
 msgid "Blog"
 msgstr "Blog"
 
-#: cmsblog/djangocms_blog/cms_menus.py:24
+#: djangocms-blog/djangocms_blog/cms_menus.py:24
 msgid "Blog menu"
 msgstr "Blog ponuka"
 
-#: cmsblog/djangocms_blog/cms_toolbars.py:25
+#: djangocms-blog/djangocms_blog/cms_toolbars.py:25
 msgid "Post list"
 msgstr "Zoznam postov"
 
-#: cmsblog/djangocms_blog/cms_toolbars.py:27
+#: djangocms-blog/djangocms_blog/cms_toolbars.py:27
 msgid "Add post"
 msgstr "Pridať post"
 
-#: cmsblog/djangocms_blog/cms_toolbars.py:31
+#: djangocms-blog/djangocms_blog/cms_toolbars.py:31
 msgid "Edit configuration"
 msgstr "Editovať konfiguráciu"
 
-#: cmsblog/djangocms_blog/cms_toolbars.py:35
+#: djangocms-blog/djangocms_blog/cms_toolbars.py:35
 msgid "Edit Post"
 msgstr "Editovať post"
 
-#: cmsblog/djangocms_blog/cms_toolbars.py:49
+#: djangocms-blog/djangocms_blog/cms_toolbars.py:49
 #, python-brace-format
 msgid "Publish {0} now"
 msgstr "Zverejni {0} teraz"
 
-#: cmsblog/djangocms_blog/cms_toolbars.py:95
+#: djangocms-blog/djangocms_blog/cms_toolbars.py:95
 msgid "Copy all placeholders"
 msgstr "Skopíruj všetky zástupný symboly (placeholder)"
 
-#: cmsblog/djangocms_blog/cms_toolbars.py:97
+#: djangocms-blog/djangocms_blog/cms_toolbars.py:97
 #, python-format
 msgid "from %s"
 msgstr "z %s"
 
-#: cmsblog/djangocms_blog/cms_toolbars.py:98
+#: djangocms-blog/djangocms_blog/cms_toolbars.py:98
 #, python-format
 msgid "Are you sure you want to copy all plugins from %s?"
 msgstr "Ste si istý že si chcete skopírovať všetky doplnky (plugin)%s?"
 
-#: cmsblog/djangocms_blog/cms_wizards.py:58
+#: djangocms-blog/djangocms_blog/cms_wizards.py:58
 #, python-brace-format
 msgid "New {0}"
 msgstr "Nový {0}"
 
-#: cmsblog/djangocms_blog/cms_wizards.py:62
+#: djangocms-blog/djangocms_blog/cms_wizards.py:62
 #, python-brace-format
 msgid "Create a new {0} in {1}"
 msgstr "Vytvor nový {0} v {1}"
 
-#: cmsblog/djangocms_blog/feeds.py:49
+#: djangocms-blog/djangocms_blog/feeds.py:49
 #, python-format
 msgid "Blog articles on %(site_name)s"
 msgstr "Články blogu na %(site_name)s"
 
-#: cmsblog/djangocms_blog/liveblog/apps.py:10
+#: djangocms-blog/djangocms_blog/liveblog/apps.py:10
 msgid "Liveblog"
 msgstr "Živý blog"
 
-#: cmsblog/djangocms_blog/liveblog/cms_plugins.py:15
+#: djangocms-blog/djangocms_blog/liveblog/cms_plugins.py:15
 msgid "Liveblog item"
 msgstr "Položka živého blogu"
 
-#: cmsblog/djangocms_blog/liveblog/models.py:29
+#: djangocms-blog/djangocms_blog/liveblog/models.py:29
 msgid "publish liveblog entry"
 msgstr "zverejnenie záznamu živého blogu"
 
-#: cmsblog/djangocms_blog/liveblog/models.py:30
+#: djangocms-blog/djangocms_blog/liveblog/models.py:30
 msgid "post date"
 msgstr "dátum postu"
 
-#: cmsblog/djangocms_blog/liveblog/models.py:33
-#: cmsblog/djangocms_blog/liveblog/models.py:108
+#: djangocms-blog/djangocms_blog/liveblog/models.py:33
+#: djangocms-blog/djangocms_blog/liveblog/models.py:108
 msgid "liveblog entry"
 msgstr "záznam živého blogu"
 
-#: cmsblog/djangocms_blog/liveblog/models.py:34
-#: cmsblog/djangocms_blog/liveblog/models.py:109
+#: djangocms-blog/djangocms_blog/liveblog/models.py:34
+#: djangocms-blog/djangocms_blog/liveblog/models.py:109
 msgid "liveblog entries"
 msgstr "záznamy živého blogu"
 
-#: cmsblog/djangocms_blog/liveblog/models.py:97
-#: cmsblog/djangocms_blog/models.py:235
+#: djangocms-blog/djangocms_blog/liveblog/models.py:97
+#: djangocms-blog/djangocms_blog/models.py:234
 msgid "title"
 msgstr "nadpis"
 
-#: cmsblog/djangocms_blog/liveblog/models.py:99
+#: djangocms-blog/djangocms_blog/liveblog/models.py:99
 msgid "image"
 msgstr "obrázok"
 
-#: cmsblog/djangocms_blog/liveblog/models.py:103
+#: djangocms-blog/djangocms_blog/liveblog/models.py:103
 msgid "thumbnail size"
 msgstr "veľkosť thumbnailu"
 
-#: cmsblog/djangocms_blog/models.py:66
+#: djangocms-blog/djangocms_blog/models.py:66
 msgid "parent"
 msgstr "rodič"
 
-#: cmsblog/djangocms_blog/models.py:68
+#: djangocms-blog/djangocms_blog/models.py:68
 msgid "created at"
 msgstr "vytvorené o"
 
-#: cmsblog/djangocms_blog/models.py:69
+#: djangocms-blog/djangocms_blog/models.py:69
 msgid "modified at"
 msgstr "zmenené o"
 
-#: cmsblog/djangocms_blog/models.py:71 cmsblog/djangocms_blog/models.py:231
-#: cmsblog/djangocms_blog/models.py:537
+#: djangocms-blog/djangocms_blog/models.py:71
+#: djangocms-blog/djangocms_blog/models.py:230
+#: djangocms-blog/djangocms_blog/models.py:540
 msgid "app. config"
 msgstr "app. config"
 
-#: cmsblog/djangocms_blog/models.py:76
+#: djangocms-blog/djangocms_blog/models.py:75
 msgid "Blog category image"
 msgstr "Obrázok kategórie blogu"
 
-#: cmsblog/djangocms_blog/models.py:86
+#: djangocms-blog/djangocms_blog/models.py:85
 msgid "Blog category import id"
 msgstr "Import ID kategórie blogu"
 
-#: cmsblog/djangocms_blog/models.py:90
+#: djangocms-blog/djangocms_blog/models.py:89
 msgid "name"
 msgstr "meno"
 
-#: cmsblog/djangocms_blog/models.py:91 cmsblog/djangocms_blog/models.py:236
+#: djangocms-blog/djangocms_blog/models.py:90
+#: djangocms-blog/djangocms_blog/models.py:235
 msgid "slug"
 msgstr "identifikátor"
 
-#: cmsblog/djangocms_blog/models.py:92 cmsblog/djangocms_blog/models.py:239
+#: djangocms-blog/djangocms_blog/models.py:91
+#: djangocms-blog/djangocms_blog/models.py:238
 msgid "post meta description"
 msgstr "meta popis postu"
 
-#: cmsblog/djangocms_blog/models.py:94 cmsblog/djangocms_blog/models.py:241
+#: djangocms-blog/djangocms_blog/models.py:93
+#: djangocms-blog/djangocms_blog/models.py:240
 msgid "post meta keywords"
 msgstr "kľúčové slová meta popisu"
 
-#: cmsblog/djangocms_blog/models.py:96 cmsblog/djangocms_blog/models.py:243
+#: djangocms-blog/djangocms_blog/models.py:95
+#: djangocms-blog/djangocms_blog/models.py:242
 msgid "post meta title"
 msgstr "meta nadpis postu"
 
-#: cmsblog/djangocms_blog/models.py:97 cmsblog/djangocms_blog/models.py:244
+#: djangocms-blog/djangocms_blog/models.py:96
+#: djangocms-blog/djangocms_blog/models.py:243
 msgid "used in title tag and social sharing"
 msgstr "použité v tagu nadpisu a v social sharing"
 
-#: cmsblog/djangocms_blog/models.py:118
+#: djangocms-blog/djangocms_blog/models.py:117
 msgid "blog category"
 msgstr "kategória blogu"
 
-#: cmsblog/djangocms_blog/models.py:119
+#: djangocms-blog/djangocms_blog/models.py:118
 msgid "blog categories"
 msgstr "kategórie blogu"
 
-#: cmsblog/djangocms_blog/models.py:200
+#: djangocms-blog/djangocms_blog/models.py:199
 msgid "author"
 msgstr "autor"
 
-#: cmsblog/djangocms_blog/models.py:203
+#: djangocms-blog/djangocms_blog/models.py:202
 msgid "created"
 msgstr "vytvorené"
 
-#: cmsblog/djangocms_blog/models.py:204
+#: djangocms-blog/djangocms_blog/models.py:203
 msgid "last modified"
 msgstr "zmenené naposledy"
 
-#: cmsblog/djangocms_blog/models.py:205
+#: djangocms-blog/djangocms_blog/models.py:204
 msgid "published since"
 msgstr "zverejnené od"
 
-#: cmsblog/djangocms_blog/models.py:206
+#: djangocms-blog/djangocms_blog/models.py:205
 msgid "published until"
 msgstr "zverejnené po"
 
-#: cmsblog/djangocms_blog/models.py:207
+#: djangocms-blog/djangocms_blog/models.py:206
 msgid "featured date"
 msgstr "odporúčaný dátum"
 
-#: cmsblog/djangocms_blog/models.py:208
+#: djangocms-blog/djangocms_blog/models.py:207
 msgid "publish"
 msgstr "zverejnené"
 
-#: cmsblog/djangocms_blog/models.py:209
+#: djangocms-blog/djangocms_blog/models.py:208
 msgid "category"
 msgstr "kategória"
 
-#: cmsblog/djangocms_blog/models.py:211
+#: djangocms-blog/djangocms_blog/models.py:210
 msgid "main image"
 msgstr "Hlavný obrázok"
 
-#: cmsblog/djangocms_blog/models.py:215
+#: djangocms-blog/djangocms_blog/models.py:214
 msgid "main image thumbnail"
 msgstr "Thumbnail hlavného obrázoka"
 
-#: cmsblog/djangocms_blog/models.py:220
+#: djangocms-blog/djangocms_blog/models.py:219
 msgid "main image full"
 msgstr "Celý hlavný obrázok"
 
-#: cmsblog/djangocms_blog/models.py:224
+#: djangocms-blog/djangocms_blog/models.py:223
 msgid "enable comments on post"
 msgstr "Povoliť post commenty"
 
-#: cmsblog/djangocms_blog/models.py:226
+#: djangocms-blog/djangocms_blog/models.py:225
 msgid "Site(s)"
 msgstr "Stránka(s)"
 
-#: cmsblog/djangocms_blog/models.py:227
+#: djangocms-blog/djangocms_blog/models.py:226
 msgid ""
 "Select sites in which to show the post. If none is set it will be visible in "
 "all the configured sites."
@@ -440,319 +447,348 @@ msgstr ""
 "Vyberte stránky, na ktorých sa príspevok zobrazí. Ak nie je nastavená "
 "žiadná, bude viditeľné na všetkých nakonfigurovaných stránkach."
 
-#: cmsblog/djangocms_blog/models.py:238
+#: djangocms-blog/djangocms_blog/models.py:237
 msgid "abstract"
 msgstr "abstrakt"
 
-#: cmsblog/djangocms_blog/models.py:247
+#: djangocms-blog/djangocms_blog/models.py:246
 msgid "text"
 msgstr "text"
 
-#: cmsblog/djangocms_blog/models.py:252
+#: djangocms-blog/djangocms_blog/models.py:251
 msgid "enable liveblog on post"
 msgstr "povoliť živý blog na poste"
 
-#: cmsblog/djangocms_blog/models.py:259
+#: djangocms-blog/djangocms_blog/models.py:258
 msgid "Related Posts"
 msgstr "Podobné posty"
 
-#: cmsblog/djangocms_blog/models.py:263
+#: djangocms-blog/djangocms_blog/models.py:262
 msgid "Hits"
 msgstr "Videnia"
 
-#: cmsblog/djangocms_blog/models.py:267
+#: djangocms-blog/djangocms_blog/models.py:266
+#: djangocms-blog/djangocms_blog/views.py:167
 msgid "Recommended"
-msgstr "Odporúčaný"
+msgstr "Odporúčané"
 
-#: cmsblog/djangocms_blog/models.py:272
+#: djangocms-blog/djangocms_blog/models.py:271
 msgid "Pinned"
 msgstr "Pinned"
 
-#: cmsblog/djangocms_blog/models.py:279
+#: djangocms-blog/djangocms_blog/models.py:278
 msgid "Keywords"
 msgstr "Kľúčové slová"
 
-#: cmsblog/djangocms_blog/models.py:280
+#: djangocms-blog/djangocms_blog/models.py:279
 msgid "Page meta keywords"
 msgstr "Meta kľúčové slová stránky"
 
-#: cmsblog/djangocms_blog/models.py:312
+#: djangocms-blog/djangocms_blog/models.py:311
 msgid "blog article"
 msgstr "Blog článok"
 
-#: cmsblog/djangocms_blog/models.py:313
+#: djangocms-blog/djangocms_blog/models.py:312
 msgid "blog articles"
 msgstr "Blog články"
 
-#: cmsblog/djangocms_blog/models.py:540
+#: djangocms-blog/djangocms_blog/models.py:543
 msgid "current site"
 msgstr "aktuálna stránka"
 
-#: cmsblog/djangocms_blog/models.py:540
+#: djangocms-blog/djangocms_blog/models.py:543
 msgid "Select items from the current site only"
 msgstr "Vyber položky len z aktuálnej stránky"
 
-#: cmsblog/djangocms_blog/models.py:544
+#: djangocms-blog/djangocms_blog/models.py:547
 msgid "Plugin template"
 msgstr "Šablóna pluginu"
 
-#: cmsblog/djangocms_blog/models.py:545
+#: djangocms-blog/djangocms_blog/models.py:548
 msgid "Select plugin template to load for this instance"
 msgstr "Vyber šablónu plaginu pre inštanciu"
 
-#: cmsblog/djangocms_blog/models.py:579 cmsblog/djangocms_blog/models.py:615
+#: djangocms-blog/djangocms_blog/models.py:582
+#: djangocms-blog/djangocms_blog/models.py:613
+#: djangocms-blog/djangocms_blog/models.py:633
 msgid "articles"
 msgstr "články"
 
-#: cmsblog/djangocms_blog/models.py:580
+#: djangocms-blog/djangocms_blog/models.py:583
+#: djangocms-blog/djangocms_blog/models.py:614
 msgid "The number of latests articles to be displayed."
 msgstr "Počet najnovších článkov, ktoré sa majú zobraziť."
 
-#: cmsblog/djangocms_blog/models.py:582
+#: djangocms-blog/djangocms_blog/models.py:585
 msgid "filter by tag"
 msgstr "filtrovať podľa tagu"
 
-#: cmsblog/djangocms_blog/models.py:583
+#: djangocms-blog/djangocms_blog/models.py:586
 msgid "Show only the blog articles tagged with chosen tags."
 msgstr "Zobraz iba blogové články označené vybranými tagmi."
 
-#: cmsblog/djangocms_blog/models.py:586
+#: djangocms-blog/djangocms_blog/models.py:589
 msgid "filter by category"
 msgstr "filtrovať podľa kategórie"
 
-#: cmsblog/djangocms_blog/models.py:587
+#: djangocms-blog/djangocms_blog/models.py:590
 msgid "Show only the blog articles tagged with chosen categories."
 msgstr "Zobraz iba blogové články označené vybranými kategóriami."
 
-#: cmsblog/djangocms_blog/models.py:591
+#: djangocms-blog/djangocms_blog/models.py:594
 #, python-format
 msgid "%s latest articles by tag"
 msgstr "%s najnovšie články podľa tagu"
 
-#: cmsblog/djangocms_blog/models.py:611
+#: djangocms-blog/djangocms_blog/models.py:618
+#, fuzzy, python-format
+#| msgid "%s latest articles by tag"
+msgid "%s most read articles by tag"
+msgstr "%s najnovšie články podľa tagu"
+
+#: djangocms-blog/djangocms_blog/models.py:629
 msgid "authors"
 msgstr "autori"
 
-#: cmsblog/djangocms_blog/models.py:616
+#: djangocms-blog/djangocms_blog/models.py:634
 msgid "The number of author articles to be displayed."
 msgstr "Počet autorských článkov, ktoré sa majú zobraziť."
 
-#: cmsblog/djangocms_blog/models.py:620
+#: djangocms-blog/djangocms_blog/models.py:638
 #, python-format
 msgid "%s latest articles by author"
 msgstr "%s najnovšie články podľa autora"
 
-#: cmsblog/djangocms_blog/models.py:652
+#: djangocms-blog/djangocms_blog/models.py:670
 msgid "generic blog plugin"
 msgstr "generický blog plugin"
 
-#: cmsblog/djangocms_blog/settings.py:17
+#: djangocms-blog/djangocms_blog/settings.py:17
 msgid "Full date"
 msgstr "Celý dátum"
 
-#: cmsblog/djangocms_blog/settings.py:18
+#: djangocms-blog/djangocms_blog/settings.py:18
 msgid "Year /  Month"
 msgstr "Rok / Mesiac"
 
-#: cmsblog/djangocms_blog/settings.py:19
-#: cmsblog/djangocms_blog/templates/djangocms_blog/post_list.html:14
+#: djangocms-blog/djangocms_blog/settings.py:19
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/post_list.html:14
 msgid "Category"
 msgstr "Kategória"
 
-#: cmsblog/djangocms_blog/settings.py:20
+#: djangocms-blog/djangocms_blog/settings.py:20
 msgid "Just slug"
 msgstr "Len identifikátor"
 
-#: cmsblog/djangocms_blog/settings.py:29
+#: djangocms-blog/djangocms_blog/settings.py:29
 msgid "Categories and posts"
 msgstr "Kategórie a posty"
 
-#: cmsblog/djangocms_blog/settings.py:30
+#: djangocms-blog/djangocms_blog/settings.py:30
 msgid "Categories only"
 msgstr "Len kategórie"
 
-#: cmsblog/djangocms_blog/settings.py:31
+#: djangocms-blog/djangocms_blog/settings.py:31
 msgid "Posts only"
 msgstr "Len posty"
 
-#: cmsblog/djangocms_blog/settings.py:32
+#: djangocms-blog/djangocms_blog/settings.py:32
 msgid "None"
 msgstr "None"
 
-#: cmsblog/djangocms_blog/settings.py:35
+#: djangocms-blog/djangocms_blog/settings.py:35
 msgid "always"
 msgstr "vždy"
 
-#: cmsblog/djangocms_blog/settings.py:36
+#: djangocms-blog/djangocms_blog/settings.py:36
 msgid "hourly"
 msgstr "hodinový"
 
-#: cmsblog/djangocms_blog/settings.py:37
+#: djangocms-blog/djangocms_blog/settings.py:37
 msgid "daily"
 msgstr "denný"
 
-#: cmsblog/djangocms_blog/settings.py:38
+#: djangocms-blog/djangocms_blog/settings.py:38
 msgid "weekly"
 msgstr "týždňový"
 
-#: cmsblog/djangocms_blog/settings.py:39
+#: djangocms-blog/djangocms_blog/settings.py:39
 msgid "monthly"
 msgstr "mesačný"
 
-#: cmsblog/djangocms_blog/settings.py:40
+#: djangocms-blog/djangocms_blog/settings.py:40
 msgid "yearly"
 msgstr "ročný"
 
-#: cmsblog/djangocms_blog/settings.py:41
+#: djangocms-blog/djangocms_blog/settings.py:41
 msgid "never"
 msgstr "nikdy"
 
-#: cmsblog/djangocms_blog/settings.py:117
+#: djangocms-blog/djangocms_blog/settings.py:117
 msgid "Latest Blog Articles"
 msgstr "Najnovšie Blog Články"
 
-#: cmsblog/djangocms_blog/settings.py:119
+#: djangocms-blog/djangocms_blog/settings.py:119
+#, fuzzy
+#| msgid "Latest Blog Articles"
+msgid "Most Read Blog Articles"
+msgstr "Najnovšie Blog Články"
+
+#: djangocms-blog/djangocms_blog/settings.py:121
 msgid "Latest Blog Articles - Cache"
 msgstr "Najnovšie Blog Články - Cache"
 
-#: cmsblog/djangocms_blog/settings.py:121
+#: djangocms-blog/djangocms_blog/settings.py:123
 msgid "Author Blog Articles"
 msgstr "Autor Blog Články"
 
-#: cmsblog/djangocms_blog/settings.py:123
-#: cmsblog/djangocms_blog/templates/djangocms_blog/plugins/tags.html:3
+#: djangocms-blog/djangocms_blog/settings.py:125
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/plugins/tags.html:3
 msgid "Tags"
 msgstr "Tagy"
 
-#: cmsblog/djangocms_blog/settings.py:125
-#: cmsblog/djangocms_blog/templates/djangocms_blog/plugins/categories.html:3
+#: djangocms-blog/djangocms_blog/settings.py:127
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/plugins/categories.html:3
 msgid "Categories"
 msgstr "Kategórie"
 
-#: cmsblog/djangocms_blog/settings.py:127
-#: cmsblog/djangocms_blog/templates/djangocms_blog/plugins/archive.html:3
-#: cmsblog/djangocms_blog/templates/djangocms_blog/post_list.html:12
+#: djangocms-blog/djangocms_blog/settings.py:129
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/plugins/archive.html:3
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/post_list.html:12
 msgid "Archive"
 msgstr "Archív"
 
-#: cmsblog/djangocms_blog/settings.py:140
+#: djangocms-blog/djangocms_blog/settings.py:142
 msgid "Default template"
 msgstr "Predvolená šablóna"
 
-#: cmsblog/djangocms_blog/templates/djangocms_blog/includes/blog_item.html:24
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/includes/blog_item.html:24
 msgid "read more"
 msgstr "čítaj ďalej"
 
-#: cmsblog/djangocms_blog/templates/djangocms_blog/includes/blog_meta.html:6
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/includes/blog_meta.html:6
 msgid "by"
 msgstr "podľa"
 
-#: cmsblog/djangocms_blog/templates/djangocms_blog/plugins/archive.html:17
-#: cmsblog/djangocms_blog/templates/djangocms_blog/plugins/authors.html:10
-#: cmsblog/djangocms_blog/templates/djangocms_blog/plugins/categories.html:10
-#: cmsblog/djangocms_blog/templates/djangocms_blog/plugins/tags.html:10
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/plugins/archive.html:17
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/plugins/authors.html:10
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/plugins/categories.html:10
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/plugins/tags.html:10
 #, python-format
 msgid "1 article"
 msgid_plural "%(articles)s articles"
 msgstr[0] "1 článok"
 msgstr[1] "%(articles)s článkov"
 
-#: cmsblog/djangocms_blog/templates/djangocms_blog/plugins/archive.html:18
-#: cmsblog/djangocms_blog/templates/djangocms_blog/plugins/authors.html:11
-#: cmsblog/djangocms_blog/templates/djangocms_blog/plugins/categories.html:11
-#: cmsblog/djangocms_blog/templates/djangocms_blog/plugins/tags.html:11
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/plugins/archive.html:18
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/plugins/authors.html:11
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/plugins/categories.html:11
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/plugins/tags.html:11
 msgid "0 articles"
 msgstr "0 článkov"
 
-#: cmsblog/djangocms_blog/templates/djangocms_blog/plugins/archive.html:26
-#: cmsblog/djangocms_blog/templates/djangocms_blog/plugins/authors.html:15
-#: cmsblog/djangocms_blog/templates/djangocms_blog/plugins/latest_entries.html:7
-#: cmsblog/djangocms_blog/templates/djangocms_blog/plugins/tags.html:15
-#: cmsblog/djangocms_blog/templates/djangocms_blog/post_list.html:21
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/plugins/archive.html:26
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/plugins/authors.html:15
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/plugins/latest_entries.html:7
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/plugins/most_read.html:7
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/plugins/tags.html:15
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/post_list.html:21
 msgid "No article found."
 msgstr "Články sa nenašli."
 
-#: cmsblog/djangocms_blog/templates/djangocms_blog/plugins/authors.html:3
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/plugins/authors.html:3
 msgid "Authors"
 msgstr "Autori"
 
-#: cmsblog/djangocms_blog/templates/djangocms_blog/plugins/categories.html:15
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/plugins/categories.html:15
 msgid "No categories found."
 msgstr "Kategórie sa nenašli."
 
-#: cmsblog/djangocms_blog/templates/djangocms_blog/post_list.html:11
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/post_list.html:11
 msgid "Articles by"
 msgstr "Články podľa"
 
-#: cmsblog/djangocms_blog/templates/djangocms_blog/post_list.html:13
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/post_list.html:13
 msgid "Tag"
 msgstr "Tagy"
 
-#: cmsblog/djangocms_blog/templates/djangocms_blog/post_list.html:24
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/post_list.html:24
 msgid "Back"
 msgstr "Späť"
 
-#: cmsblog/djangocms_blog/templates/djangocms_blog/post_list.html:29
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/post_list.html:29
 msgid "previous"
 msgstr "predchádzajúca"
 
-#: cmsblog/djangocms_blog/templates/djangocms_blog/post_list.html:32
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/post_list.html:32
 msgid "Page"
 msgstr "Strana"
 
-#: cmsblog/djangocms_blog/templates/djangocms_blog/post_list.html:32
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/post_list.html:32
 msgid "of"
 msgstr "z"
 
-#: cmsblog/djangocms_blog/templates/djangocms_blog/post_list.html:35
+#: djangocms-blog/djangocms_blog/templates/djangocms_blog/post_list.html:35
 msgid "next"
 msgstr "nasledujúca"
 
-#: cmsblog/djangocms_blog/urls.py:29
+#: djangocms-blog/djangocms_blog/urls.py:29
+msgid "^all/$"
+msgstr ""
+
+#: djangocms-blog/djangocms_blog/urls.py:31
 msgid "^most_read/$"
 msgstr "najcitanejsie"
 
-#: cmsblog/djangocms_blog/urls.py:31
+#: djangocms-blog/djangocms_blog/urls.py:33
 msgid "^recommended/$"
 msgstr "^odporucane/$"
 
-#: cmsblog/djangocms_blog/urls.py:33
+#: djangocms-blog/djangocms_blog/urls.py:35
 msgid "^newest/$"
 msgstr "^najnovsie/$"
 
-#: cmsblog/djangocms_blog/urls.py:35
+#: djangocms-blog/djangocms_blog/urls.py:37
 msgid "^feed/$"
 msgstr "^feed/$"
 
-#: cmsblog/djangocms_blog/urls.py:37
+#: djangocms-blog/djangocms_blog/urls.py:39
 msgid "^feed/fb/$"
 msgstr "^feed/fb/$"
 
-#: cmsblog/djangocms_blog/urls.py:39
+#: djangocms-blog/djangocms_blog/urls.py:41
 #, python-brace-format
 msgid "^(?P<year>\\d{4})/$"
 msgstr "^(?P<year>\\d{4})/$"
 
-#: cmsblog/djangocms_blog/urls.py:41
+#: djangocms-blog/djangocms_blog/urls.py:43
 msgid "^(?P<year>\\d{4})/(?P<month>\\d{1,2})/$"
 msgstr "^(?P<year>\\d{4})/(?P<month>\\d{1,2})/$"
 
-#: cmsblog/djangocms_blog/urls.py:43
+#: djangocms-blog/djangocms_blog/urls.py:45
 msgid "^author/(?P<username>[\\w\\.@+-]+)/$"
 msgstr "^autor/(?P<username>[\\w\\.@+-]+)/$"
 
-#: cmsblog/djangocms_blog/urls.py:45
+#: djangocms-blog/djangocms_blog/urls.py:47
 msgid "^category/(?P<category>[\\w\\.@+-]+)/$"
 msgstr "^kategoria/(?P<category>[\\w\\.@+-]+)/$"
 
-#: cmsblog/djangocms_blog/urls.py:47
+#: djangocms-blog/djangocms_blog/urls.py:49
 msgid "^tag/(?P<tag>[-\\w]+)/$"
 msgstr "^tag/(?P<tag>[-\\w]+)/$"
 
-#: cmsblog/djangocms_blog/urls.py:49
+#: djangocms-blog/djangocms_blog/urls.py:51
 msgid "^tag/(?P<tag>[-\\w]+)/feed/$"
 msgstr "^tag/(?P<tag>[-\\w]+)/feed/$"
 
-#: cmsblog/djangocms_blog/views.py:273
+#: djangocms-blog/djangocms_blog/views.py:183
+msgid "Most read"
+msgstr "Najčítanejšie"
+
+#: djangocms-blog/djangocms_blog/views.py:199
+msgid "Newest"
+msgstr "Najnovšie"
+
+#: djangocms-blog/djangocms_blog/views.py:273
 msgid "Language must be set to a supported language!"
 msgstr "Jazyk musí byť nastavený na podporovaný jazyk!"
