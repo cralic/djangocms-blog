@@ -88,7 +88,7 @@ class PostAdmin(PlaceholderAdminMixin, FrontendEditableAdminMixin,
         (None, {
             'fields': [['title', 'categories', 'publish', 'app_config', 'recommended', 'pinned']]
         }),
-        (None, {
+        (_('Related'), {
             'fields': [['related', ]]
         }),
         (_('Info'), {
