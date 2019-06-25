@@ -12,7 +12,9 @@ from menus.menu_pool import menu_pool
 
 from .cms_appconfig import BlogConfig
 from .models import BlogCategory, Post
-from .settings import MENU_TYPE_CATEGORIES, MENU_TYPE_COMPLETE, MENU_TYPE_POSTS, get_setting
+from .settings import (
+    MENU_TYPE_CATEGORIES, MENU_TYPE_COMPLETE, MENU_TYPE_NONE, MENU_TYPE_POSTS, get_setting,
+)
 
 
 class BlogCategoryMenu(CMSAttachMenu):
@@ -36,19 +38,22 @@ class BlogCategoryMenu(CMSAttachMenu):
         language = get_language_from_request(request, check_path=True)
         current_site = get_current_site(request)
 
-        if self.instance.site != current_site:
+        try:
+            page_site = self.instance.node.site
+        except AttributeError:  # Compatibility with django CMS 3.4-
+            page_site = self.instance.site
+        if self.instance and page_site != current_site:
             return []
 
         categories_menu = False
         posts_menu = False
         config = False
-        if hasattr(self, 'instance') and self.instance:
+        if self.instance:
             if not self._config.get(self.instance.application_namespace, False):
                 self._config[self.instance.application_namespace] = BlogConfig.objects.get(
                     namespace=self.instance.application_namespace
                 )
             config = self._config[self.instance.application_namespace]
-        if hasattr(self, 'instance') and self.instance:
             if not getattr(request, 'toolbar', False) or not request.toolbar.edit_mode:
                 if self.instance == self.instance.get_draft_object():
                     return []
@@ -59,6 +64,8 @@ class BlogCategoryMenu(CMSAttachMenu):
             categories_menu = True
         if config and config.menu_structure in (MENU_TYPE_COMPLETE, MENU_TYPE_POSTS):
             posts_menu = True
+        if config and config.menu_structure in (MENU_TYPE_NONE, ):
+            return nodes
 
         used_categories = []
         if posts_menu:
@@ -67,7 +74,6 @@ class BlogCategoryMenu(CMSAttachMenu):
                 posts = posts.namespace(self.instance.application_namespace).on_site()
             posts = posts.active_translations(language).distinct().\
                 select_related('app_config').prefetch_related('translations', 'categories')
-
             for post in posts:
                 post_id = None
                 parent = None

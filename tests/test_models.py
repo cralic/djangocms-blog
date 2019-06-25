@@ -15,6 +15,8 @@ from django.contrib.auth.models import AnonymousUser
 from django.contrib.messages.middleware import MessageMiddleware
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
+from django.http import QueryDict
+from django.test import override_settings
 from django.utils.encoding import force_text
 from django.utils.html import strip_tags
 from django.utils.timezone import now
@@ -25,10 +27,17 @@ from parler.utils.context import smart_override
 from taggit.models import Tag
 
 from djangocms_blog.cms_appconfig import BlogConfig, BlogConfigForm
+from djangocms_blog.forms import CategoryAdminForm, PostAdminForm
 from djangocms_blog.models import BlogCategory, Post
 from djangocms_blog.settings import MENU_TYPE_NONE, get_setting
 
 from .base import BaseTest
+
+try:  # pragma: no cover
+    from cmsplugin_filer_image.models import ThumbnailOption  # NOQA
+except ImportError:  # pragma: no cover
+    from filer.models import ThumbnailOption  # NOQA
+
 
 try:
     from unittest import SkipTest
@@ -48,6 +57,20 @@ class AdminTest(BaseTest):
     def setUp(self):
         super(AdminTest, self).setUp()
         admin.autodiscover()
+        self.default_thumbnail = ThumbnailOption.objects.create(
+            name='Blog thumbnail',
+            width=120,
+            height=120,
+            crop=True,
+            upscale=True,
+        )
+        self.default_full = ThumbnailOption.objects.create(
+            name='Blog image',
+            width=800,
+            height=200,
+            crop=True,
+            upscale=True,
+        )
 
     def test_admin_post_views(self):
         self.get_pages()
@@ -60,13 +83,24 @@ class AdminTest(BaseTest):
 
         # Add view only contains the apphook selection widget
         response = post_admin.add_view(request)
-        self.assertNotContains(response, '<input id="id_slug" maxlength="255" name="slug" type="text"')
+        self.assertNotContains(response, '<input id="id_slug" maxlength="767" name="slug" type="text"')
         self.assertContains(response, '<option value="%s">Blog / sample_app</option>' % self.app_config_1.pk)
 
         # Changeview is 'normal'
         response = post_admin.change_view(request, str(post.pk))
-        self.assertContains(response, '<input id="id_slug" maxlength="255" name="slug" type="text" value="first-post" />')
-        self.assertContains(response, '<option value="%s" selected="selected">Blog / sample_app</option>' % self.app_config_1.pk)
+        response.render()
+        try:
+            self.assertRegexpMatches(force_text(response.content), r'name="slug"[^>]*value="first-post"')
+        except AssertionError:
+            self.assertRegexpMatches(force_text(response.content), r'value="first-post"[^>]*name="slug"')
+        try:
+            self.assertRegexpMatches(force_text(response.content), r'id="id_meta_description"[^>]*maxlength="320"')
+        except AssertionError:
+            self.assertRegexpMatches(force_text(response.content), r'maxlength="320"[^>]*id="id_meta_description"')
+        try:
+            self.assertRegexpMatches(force_text(response.content), r'selected[^>]*value="%s">Blog / sample_app</option>' % self.app_config_1.pk)
+        except AssertionError:
+            self.assertRegexpMatches(force_text(response.content), r'value="%s"[^>]*selected[^>]*>Blog / sample_app</option>' % self.app_config_1.pk)
 
         # Test for publish view
         post.publish = False
@@ -142,32 +176,108 @@ class AdminTest(BaseTest):
 
         # Add view only has an empty form - no type
         response = post_admin.add_view(request)
+        response.render()
         self.assertNotContains(response, 'djangocms_blog.cms_appconfig.BlogConfig')
-        self.assertContains(response, '<input class="vTextField" id="id_namespace" maxlength="100" name="namespace" type="text"')
+        try:
+            self.assertRegexpMatches(force_text(response.content), r'maxlength="100"[^>]*id="id_namespace"')
+        except AssertionError:
+            self.assertRegexpMatches(force_text(response.content), r'id="id_namespace"[^>]*maxlength="100"')
 
         # Changeview is 'normal', with a few preselected items
         response = post_admin.change_view(request, str(self.app_config_1.pk))
         self.assertContains(response, 'djangocms_blog.cms_appconfig.BlogConfig')
-        self.assertContains(response, '<option value="Article" selected="selected">Article</option>')
+        try:
+            self.assertRegexpMatches(force_text(response.content), r'selected[^>]*value="Article">Article')
+        except AssertionError:
+            self.assertRegexpMatches(force_text(response.content), r'value="Article"[^>]*selected[^>]*>Article')
         # check that all the form fields are visible in the admin
         for fieldname in BlogConfigForm.base_fields:
             self.assertContains(response, 'id="id_config-%s"' % fieldname)
-        self.assertContains(response, '<input id="id_config-og_app_id" maxlength="200" name="config-og_app_id" type="text"')
+        try:
+            self.assertRegexpMatches(force_text(response.content), r'maxlength="200"[^>]*id="id_config-og_app_id"')
+        except AssertionError:
+            self.assertRegexpMatches(force_text(response.content), r'id="id_config-og_app_id"[^>]*maxlength="200"')
+
         self.assertContains(response, 'sample_app')
 
     def test_admin_category_views(self):
-        post_admin = admin.site._registry[BlogCategory]
+        category_admin = admin.site._registry[BlogCategory]
         request = self.get_page_request('/', self.user, r'/en/blog/', edit=False)
+        BlogCategory.objects.create(name='category 1 - blog 2', app_config=self.app_config_2)
 
         # Add view only has an empty form - no type
-        response = post_admin.add_view(request)
-        self.assertNotContains(response, 'id="id_name" maxlength="255" name="name" type="text" value="category 1"')
+        response = category_admin.add_view(request)
+        self.assertNotContains(response, 'value="category 1"')
         self.assertContains(response, '<option value="%s">Blog / sample_app</option>' % self.app_config_1.pk)
 
+        # Add view select categories on the given appconfig, even when reloading the form
+        request.POST = QueryDict('app_config=1')
+        request.method = 'POST'
+        response = category_admin.add_view(request)
+        self.assertTrue(
+            response.context_data['adminform'].form.fields['parent'].queryset,
+            BlogCategory.objects.filter(app_config=self.app_config_1)
+        )
+
+        request.GET = QueryDict('app_config=1')
+        request.method = 'GET'
+        response = category_admin.add_view(request)
+        self.assertTrue(
+            response.context_data['adminform'].form.fields['parent'].queryset,
+            BlogCategory.objects.filter(app_config=self.app_config_1)
+        )
+
         # Changeview is 'normal', with a few preselected items
-        response = post_admin.change_view(request, str(self.category_1.pk))
-        self.assertContains(response, 'id="id_name" maxlength="255" name="name" type="text" value="category 1"')
-        self.assertContains(response, '<option value="%s" selected="selected">Blog / sample_app</option>' % self.app_config_1.pk)
+        request.GET = QueryDict()
+        response = category_admin.change_view(request, str(self.category_1.pk))
+        response.render()
+        try:
+            self.assertRegexpMatches(force_text(response.content), r'id="id_name"[^>]*value="category 1"')
+        except AssertionError:
+            self.assertRegexpMatches(force_text(response.content), r'value="category 1"[^>]*id="id_name"')
+        try:
+            self.assertRegexpMatches(force_text(response.content), r'id="id_meta_description"[^>]*maxlength="320"')
+        except AssertionError:
+            self.assertRegexpMatches(force_text(response.content), r'maxlength="320"[^>]*id="id_meta_description"')
+        try:
+            self.assertRegexpMatches(force_text(response.content), r'selected[^>]*value="%s">Blog / sample_app</option>' % self.app_config_1.pk)
+        except AssertionError:
+            self.assertRegexpMatches(force_text(response.content), r'value="%s"[^>]*selected[^>]*>Blog / sample_app</option>' % self.app_config_1.pk)
+
+    def test_form(self):
+        posts = self.get_posts()
+        with override_settings(BLOG_META_DESCRIPTION_LENGTH=20, BLOG_META_TITLE_LENGTH=20):
+            form = PostAdminForm(
+                data={'meta_description': 'major text over 20 characters long'},
+                instance=posts[0]
+            )
+            self.assertFalse(form.is_valid())
+            form = PostAdminForm(
+                data={'meta_title': 'major text over 20 characters long'},
+                instance=posts[0]
+            )
+            self.assertFalse(form.is_valid())
+            form = CategoryAdminForm(
+                data={'meta_description': 'major text over 20 characters long'},
+                instance=self.category_1
+            )
+            self.assertFalse(form.is_valid())
+
+            form = PostAdminForm(
+                data={'meta_description': 'mini text'},
+                instance=posts[0]
+            )
+            self.assertFalse(form.is_valid())
+            form = PostAdminForm(
+                data={'meta_title': 'mini text'},
+                instance=posts[0]
+            )
+            self.assertFalse(form.is_valid())
+            form = CategoryAdminForm(
+                data={'meta_description': 'mini text'},
+                instance=self.category_1
+            )
+            self.assertFalse(form.is_valid())
 
     def test_admin_category_parents(self):
         category1 = BlogCategory.objects.create(name='tree category 1', app_config=self.app_config_1)
@@ -181,31 +291,25 @@ class AdminTest(BaseTest):
 
         # Add view shows all the exising categories
         response = post_admin.add_view(request)
-        self.assertContains(response, '<option value="1">category 1</option>')
-        self.assertContains(response, '<option value="2">tree category 1</option>')
-        self.assertContains(response, '<option value="3">tree category 2</option>')
-        self.assertContains(response, '<option value="4">tree category 3</option>')
-        self.assertContains(response, '<option value="5">tree category 4</option>')
-        self.assertNotContains(response, 'category different branch</option>')
+        self.assertTrue(
+            response.context_data['adminform'].form.fields['parent'].queryset,
+            BlogCategory.objects.filter(app_config=self.app_config_1)
+        )
 
         # Changeview hides the children of the current category
         response = post_admin.change_view(request, str(category2.pk))
-        self.assertContains(response, '<option value="1">category 1</option>')
-        self.assertContains(response, '<option value="2" selected="selected">tree category 1</option>')
-        self.assertNotContains(response, '<option value="3">tree category 2</option>')
-        self.assertNotContains(response, '<option value="4">tree category 3</option>')
-        self.assertNotContains(response, '<option value="5">tree category 4</option>')
-        self.assertNotContains(response, 'category different branch</option>')
+        self.assertTrue(
+            response.context_data['adminform'].form.fields['parent'].queryset,
+            BlogCategory.objects.filter(app_config=self.app_config_1, parent__isnull=True)
+        )
 
         # Test second apphook categories
         request = self.get_page_request('/', self.user, r'/en/blog/?app_config=%s' % self.app_config_2.pk, edit=False)
         response = post_admin.add_view(request)
-        self.assertNotContains(response, '<option value="1">category 1</option>')
-        self.assertNotContains(response, '<option value="2">tree category 1</option>')
-        self.assertNotContains(response, '<option value="3">tree category 2</option>')
-        self.assertNotContains(response, '<option value="4">tree category 3</option>')
-        self.assertNotContains(response, '<option value="5">tree category 4</option>')
-        self.assertContains(response, 'category different branch</option>')
+        self.assertTrue(
+            response.context_data['adminform'].form.fields['parent'].queryset,
+            BlogCategory.objects.filter(app_config=self.app_config_2)
+        )
 
     def test_admin_fieldsets(self):
         post_admin = admin.site._registry[Post]
@@ -224,6 +328,28 @@ class AdminTest(BaseTest):
 
         self.app_config_1.app_data.config.use_placeholder = True
         self.app_config_1.save()
+        fsets = post_admin.get_fieldsets(request)
+        self.assertFalse('post_text' in fsets[0][1]['fields'])
+
+        # Use related posts
+        self.app_config_1.app_data.config.use_related = True
+        self.app_config_1.save()
+        fsets = post_admin.get_fieldsets(request)
+        self.assertFalse('related' in fsets[1][1]['fields'][0])
+
+        Post.objects.language('en').create(title='post x', app_config=self.app_config_1)
+        fsets = post_admin.get_fieldsets(request)
+        self.assertTrue('related' in fsets[1][1]['fields'][0])
+
+        self.app_config_1.app_data.config.use_related = False
+        self.app_config_1.save()
+        fsets = post_admin.get_fieldsets(request)
+        self.assertFalse('related' in fsets[1][1]['fields'][0])
+
+        self.app_config_1.app_data.config.use_related = True
+        self.app_config_1.save()
+        fsets = post_admin.get_fieldsets(request)
+        self.assertTrue('related' in fsets[1][1]['fields'][0])
 
         # Use abstract
         self.app_config_1.app_data.config.use_abstract = True
@@ -237,6 +363,8 @@ class AdminTest(BaseTest):
         self.assertFalse('abstract' in fsets[0][1]['fields'])
 
         self.app_config_1.app_data.config.use_abstract = True
+        self.app_config_1.app_data.config.default_image_full = self.default_full
+        self.app_config_1.app_data.config.default_image_thumbnail = self.default_thumbnail
         self.app_config_1.save()
 
         with self.settings(BLOG_MULTISITE=True):
@@ -260,10 +388,31 @@ class AdminTest(BaseTest):
             msg_mid.process_request(request)
             post_admin = admin.site._registry[Post]
             response = post_admin.add_view(request)
-            self.assertContains(response, '<option value="%s">%s</option>' % (
-                self.category_1.pk, self.category_1.safe_translation_getter('name', language_code='en')
-            ))
-            self.assertContains(response, 'id="id_sites" name="sites"')
+            self.assertTrue(
+                response.context_data['adminform'].form.fields['categories'].queryset,
+                BlogCategory.objects.filter(app_config=self.app_config_1)
+            )
+            response.render()
+            self.assertContains(response, 'id="id_sites"')
+            self.assertRegexpMatches(force_text(response.content), r'selected[^>]*>Blog image')
+            self.assertRegexpMatches(force_text(response.content), r'selected[^>]*>Blog thumbnail')
+
+            # Add view select categories on the given appconfig, even when reloading the form
+            request.POST = QueryDict('app_config=1')
+            request.method = 'POST'
+            response = post_admin.add_view(request)
+            self.assertTrue(
+                response.context_data['adminform'].form.fields['categories'].queryset,
+                BlogCategory.objects.filter(app_config=self.app_config_1)
+            )
+
+            request.GET = QueryDict('app_config=1')
+            request.method = 'GET'
+            response = post_admin.add_view(request)
+            self.assertTrue(
+                response.context_data['adminform'].form.fields['categories'].queryset,
+                BlogCategory.objects.filter(app_config=self.app_config_1)
+            )
 
         self.user.sites.add(self.site_1)
         with self.login_user_context(self.user):
@@ -498,11 +647,13 @@ class AdminTest(BaseTest):
         Tests that after changing apphook config menu structure the menu content is different: new
         value is taken immediately into account
         """
+        self._reload_menus()
+
         pages = self.get_pages()
         post = self._get_post(self._post_data[0]['en'])
 
         request = self.get_page_request(None, self.user, r'/en/page-two/')
-        first_nodes = menu_pool.get_nodes(request)
+        first_nodes = self.get_nodes(menu_pool, request)
         self._reset_menus()
         with pause_knocks(post):
             with self.login_user_context(self.user):
@@ -515,7 +666,7 @@ class AdminTest(BaseTest):
                 msg_mid.process_request(request)
                 config_admin = admin.site._registry[BlogConfig]
                 config_admin.change_view(request, str(self.app_config_1.pk))
-                second_nodes = menu_pool.get_nodes(request)
+                second_nodes = self.get_nodes(menu_pool, request)
                 self.assertNotEqual(len(first_nodes), len(second_nodes))
 
 
@@ -593,6 +744,21 @@ class ModelsTest(BaseTest):
         self.assertTrue(meta_it.url.endswith(post.get_absolute_url()))
         self.assertNotEqual(meta_it.title, meta_en.title)
         self.assertEqual(meta_it.description, post.meta_description)
+
+        category = post.categories.first()
+        meta_cat = category.as_meta()
+        self.assertEqual(meta_cat.og_type, get_setting('FB_TYPE'))
+        self.assertEqual(meta_cat.title, category.name)
+        self.assertEqual(meta_cat.description, category.meta_description)
+        self.assertEqual(meta_cat.locale, 'en')
+        self.assertEqual(meta_cat.twitter_site, '')
+        self.assertEqual(meta_cat.twitter_author, '')
+        self.assertEqual(meta_cat.twitter_type, 'summary')
+        self.assertEqual(meta_cat.gplus_author, 'RandomJoe')
+        self.assertEqual(meta_cat.gplus_type, 'Blog')
+        self.assertEqual(meta_cat.og_type, 'Article')
+        self.assertEqual(meta_cat.facebook_app_id, None)
+        self.assertTrue(meta_cat.url.endswith(category.get_absolute_url()))
 
         with override('en'):
             post.set_current_language(get_language())
@@ -1013,6 +1179,10 @@ class ModelsTest2(BaseTest):
             post1.content, 'BlogArchivePlugin', language='en', app_config=self.app_config_1
         )
         self.assertEqual(force_text(plugin.__str__()), 'generic blog plugin')
+
+        no_translation_post = Post()
+        no_translation_default_title = 'Post (no translation)'
+        self.assertEqual(force_text(no_translation_post), no_translation_default_title)
 
 
 class KnockerTest(BaseTest):

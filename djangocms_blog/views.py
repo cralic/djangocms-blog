@@ -11,7 +11,8 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
 from django.db import transaction
-from django.http import HttpResponseBadRequest, HttpResponse, JsonResponse
+from django.http import HttpResponseBadRequest, HttpResponse, JsonResponse, Http404
+from django.shortcuts import get_object_or_404
 from django.utils.encoding import force_text
 from django.utils.timezone import now
 from django.utils.translation import get_language
@@ -225,7 +226,10 @@ class AuthorEntriesView(BaseBlogListView, ListView):
         return self.optimize(qs)
 
     def get_context_data(self, **kwargs):
-        kwargs['author'] = User.objects.get(**{User.USERNAME_FIELD: self.kwargs.get('username')})
+        kwargs['author'] = get_object_or_404(
+            User,
+            **{User.USERNAME_FIELD: self.kwargs.get('username')}
+        )
         context = super(AuthorEntriesView, self).get_context_data(**kwargs)
         return context
 
@@ -237,10 +241,12 @@ class CategoryEntriesView(BaseBlogListView, ListView):
     @property
     def category(self):
         if not self._category:
-            self._category = get_object_or_404(
-                BlogCategory,
-                translations__slug=self.kwargs['category']
-            )
+            try:
+                self._category = BlogCategory.objects.active_translations(
+                    get_language(), slug=self.kwargs['category']
+                ).get()
+            except BlogCategory.DoesNotExist:
+                raise Http404
         return self._category
 
     def get(self, *args, **kwargs):

@@ -2,22 +2,25 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import os.path
+import sys
 
 from aldryn_apphooks_config.utils import get_app_instance
 from cms.api import add_plugin
+from cms.appresolver import APP_RESOLVERS, get_app_patterns
 from cms.toolbar.items import ModalItem
 from cms.utils.apphook_reload import reload_urlconf
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
 from django.http import Http404
-from django.utils.encoding import force_text
+from django.test import override_settings
 from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
 from parler.tests.utils import override_parler_settings
 from parler.utils.conf import add_default_language_settings
 from parler.utils.context import smart_override, switch_language
 
+from djangocms_blog.cms_appconfig import BlogConfig
 from djangocms_blog.feeds import FBInstantArticles, FBInstantFeed, LatestEntriesFeed, TagFeed
 from djangocms_blog.models import BLOG_CURRENT_NAMESPACE
 from djangocms_blog.settings import get_setting
@@ -31,6 +34,19 @@ from .base import BaseTest
 
 
 class ViewTest(BaseTest):
+
+    @override_settings(BLOG_URLCONF='tests.test_utils.blog_urls')
+    def test_post_list_view_custom_urlconf(self):
+        pages = self.get_pages()
+        self.get_posts()
+        self.get_request(pages[1], 'en', AnonymousUser())
+        self.assertEqual(reverse('sample_app:posts-latest'), '/en/page-two/latests/')
+
+    def test_post_list_view_base_urlconf(self):
+        pages = self.get_pages()
+        self.get_posts()
+        self.get_request(pages[1], 'en', AnonymousUser())
+        self.assertEqual(reverse('sample_app:posts-latest'), '/en/page-two/')
 
     def test_post_list_view(self):
         pages = self.get_pages()
@@ -254,6 +270,7 @@ class ViewTest(BaseTest):
             self.assertEqual(list(context['post_list']), [posts[0]])
             self.assertEqual(context['paginator'].count, 3)
             self.assertEqual(context['post_list'][0].title, 'First post')
+            self.assertTrue(context['meta'])
 
             request = self.get_page_request(pages[1], self.user, edit=False)
             view_obj.request = request
@@ -484,3 +501,25 @@ class ViewTest(BaseTest):
             self.assertEqual(view_obj.get_template_names(), os.path.join('whatever', 'post_list.html'))
             self.app_config_1.app_data.config.template_prefix = ''
             self.app_config_1.save()
+
+    def test_non_existing_blog_category_should_raise_404(self):
+        pages = self.get_pages()
+        with smart_override('en'):
+            request = self.get_request(pages[1], 'en', AnonymousUser())
+            view_obj = CategoryEntriesView()
+            view_obj.request = request
+            view_obj.namespace, view_obj.config = get_app_instance(request)
+            with self.assertRaises(Http404):
+                view_obj.kwargs = {'category': 'unknown-category'}
+                view_obj.get_queryset()
+
+    def test_non_existing_author_should_raise_404(self):
+        pages = self.get_pages()
+        with smart_override('en'):
+            request = self.get_request(pages[1], 'en', AnonymousUser())
+            view_obj = AuthorEntriesView()
+            view_obj.request = request
+            view_obj.namespace, view_obj.config = get_app_instance(request)
+            with self.assertRaises(Http404):
+                view_obj.kwargs = {'username': 'unknown-author'}
+                view_obj.get_context_data()

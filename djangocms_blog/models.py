@@ -3,7 +3,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 import json
 import hashlib
 
-import django
 from aldryn_apphooks_config.fields import AppHookConfigField
 from aldryn_apphooks_config.managers.parler import AppHookConfigTranslatableManager
 from cms.models import CMSPlugin, PlaceholderField, Site
@@ -19,8 +18,7 @@ from django.utils import timezone
 from django.utils.encoding import force_bytes, force_text, python_2_unicode_compatible
 from django.utils.functional import cached_property
 from django.utils.html import escape, strip_tags
-from django.utils.text import slugify
-from django.utils.translation import get_language, ugettext_lazy as _
+from django.utils.translation import get_language, ugettext, ugettext_lazy as _
 from djangocms_text_ckeditor.fields import HTMLField
 from filer.fields.image import FilerImageField
 from meta.models import ModelMeta
@@ -30,7 +28,7 @@ from sortedm2m.fields import SortedManyToManyField
 from taggit_autosuggest.managers import TaggableManager
 
 from .cms_appconfig import BlogConfig
-from .fields import AutoSlugField
+from .fields import AutoSlugField, slugify
 from .managers import GenericDateTaggedManager
 from .settings import get_setting
 
@@ -57,8 +55,27 @@ except ImportError:
         pass
 
 
+class BlogMetaMixin(ModelMeta):
+
+    def get_meta_attribute(self, param):
+        """
+        Retrieves django-meta attributes from apphook config instance
+        :param param: django-meta attribute passed as key
+        """
+        return self._get_meta_value(param, getattr(self.app_config, param)) or ''
+
+    def get_locale(self):
+        return self.get_current_language()
+
+    def get_full_url(self):
+        """
+        Return the url with protocol and domain url
+        """
+        return self.build_absolute_uri(self.get_absolute_url())
+
+
 @python_2_unicode_compatible
-class BlogCategory(ModelMeta, TranslatableModel):
+class BlogCategory(BlogMetaMixin, TranslatableModel):
     """
     Blog category
     """
@@ -86,16 +103,11 @@ class BlogCategory(ModelMeta, TranslatableModel):
     )
 
     translations = TranslatedFields(
-        name=models.CharField(_('name'), max_length=255),
-        slug=models.SlugField(_('slug'), max_length=255, blank=True, db_index=True),
-        meta_description=models.TextField(verbose_name=_('post meta description'),
-                                          blank=True, default=''),
-        meta_keywords=models.TextField(verbose_name=_('post meta keywords'),
-                                       blank=True, default=''),
-        meta_title=models.CharField(verbose_name=_('post meta title'),
-                                    help_text=_('used in title tag and social sharing'),
-                                    max_length=255,
-                                    blank=True, default=''),
+        name=models.CharField(_('name'), max_length=767),
+        slug=models.SlugField(_('slug'), max_length=767, blank=True, db_index=True),
+        meta_description=models.TextField(
+            verbose_name=_('category meta description'), blank=True, default=''
+        ),
         meta={'unique_together': (('language_code', 'slug'),)}
     )
 
@@ -104,12 +116,22 @@ class BlogCategory(ModelMeta, TranslatableModel):
     _metadata = {
         'title': 'get_title',
         'description': 'get_description',
-        'keywords': 'get_keywords',
         'og_description': 'get_description',
         'twitter_description': 'get_description',
         'gplus_description': 'get_description',
         'locale': 'get_locale',
-        'image': 'get_image_full_url',
+        'object_type': 'get_meta_attribute',
+        'og_type': 'get_meta_attribute',
+        'og_app_id': 'get_meta_attribute',
+        'og_profile_id': 'get_meta_attribute',
+        'og_publisher': 'get_meta_attribute',
+        'og_author_url': 'get_meta_attribute',
+        'og_author': 'get_meta_attribute',
+        'twitter_type': 'get_meta_attribute',
+        'twitter_site': 'get_meta_attribute',
+        'twitter_author': 'get_meta_attribute',
+        'gplus_type': 'get_meta_attribute',
+        'gplus_author': 'get_meta_attribute',
         'url': 'get_absolute_url',
     }
 
@@ -165,7 +187,9 @@ class BlogCategory(ModelMeta, TranslatableModel):
     def get_absolute_url(self, lang=None):
         if not lang or lang not in self.get_available_languages():
             lang = get_language()
-        if self.has_translation(lang, ):
+        if not lang or lang not in self.get_available_languages():
+            lang = self.get_current_language()
+        if self.has_translation(lang):
             slug = self.safe_translation_getter('slug', language_code=lang)
             return reverse(
                 'djangocms_blog:posts-category',
@@ -179,7 +203,8 @@ class BlogCategory(ModelMeta, TranslatableModel):
         )
 
     def __str__(self):
-        return self.safe_translation_getter('name', any_language=True)
+        default = ugettext('BlogCategory (no translation)')
+        return self.safe_translation_getter('name', any_language=True, default=default)
 
     def save(self, *args, **kwargs):
         super(BlogCategory, self).save(*args, **kwargs)
@@ -189,9 +214,17 @@ class BlogCategory(ModelMeta, TranslatableModel):
                 self.slug = slugify(force_text(self.name))
         self.save_translations()
 
+    def get_title(self):
+        title = self.safe_translation_getter('name', any_language=True)
+        return title.strip()
+
+    def get_description(self):
+        description = self.safe_translation_getter('meta_description', any_language=True)
+        return escape(strip_tags(description)).strip()
+
 
 @python_2_unicode_compatible
-class Post(KnockerModel, ModelMeta, TranslatableModel):
+class Post(KnockerModel, BlogMetaMixin, TranslatableModel):
     """
     Blog post
     """
@@ -231,19 +264,23 @@ class Post(KnockerModel, ModelMeta, TranslatableModel):
     )
 
     translations = TranslatedFields(
-        title=models.CharField(_('title'), max_length=255),
-        slug=AutoSlugField(_('slug'), max_length=255, blank=True,
-                           db_index=True, allow_unicode=False),
-        abstract=HTMLField(_('abstract'), blank=True, default=''),
+        title=models.CharField(_('title'), max_length=767),
+        slug=AutoSlugField(_('slug'), max_length=767, blank=True,
+                           db_index=True, allow_unicode=True),
+        subtitle=models.CharField(verbose_name=_('subtitle'), max_length=767,
+                                  blank=True, default=''),
+        abstract=HTMLField(_('abstract'), blank=True, default='',
+                           configuration='BLOG_ABSTRACT_CKEDITOR'),
         meta_description=models.TextField(verbose_name=_('post meta description'),
                                           blank=True, default=''),
         meta_keywords=models.TextField(verbose_name=_('post meta keywords'),
                                        blank=True, default=''),
         meta_title=models.CharField(verbose_name=_('post meta title'),
                                     help_text=_('used in title tag and social sharing'),
-                                    max_length=255,
+                                    max_length=2000,
                                     blank=True, default=''),
-        post_text=HTMLField(_('text'), default='', blank=True),
+        post_text=HTMLField(_('text'), default='', blank=True,
+                            configuration='BLOG_POST_TEXT_CKEDITOR'),
         meta={'unique_together': (('language_code', 'slug'),)}
     )
     content = PlaceholderField('post_content', related_name='post_content')
@@ -314,7 +351,8 @@ class Post(KnockerModel, ModelMeta, TranslatableModel):
         get_latest_by = 'date_published'
 
     def __str__(self):
-        return self.safe_translation_getter('title', any_language=True)
+        default = ugettext('Post (no translation)')
+        return self.safe_translation_getter('title', any_language=True, default=default)
 
     @property
     def guid(self, language=None):
@@ -339,10 +377,7 @@ class Post(KnockerModel, ModelMeta, TranslatableModel):
         if self.publish and self.date_published is None:
             self.date_published = timezone.now()
         if not self.slug and self.title:
-            if django.VERSION >= (1, 9):
-                self.slug = slugify(self.title, allow_unicode=True)
-            else:
-                self.slug = slugify(self.title)
+            self.slug = slugify(self.title)
         super(Post, self).save(*args, **kwargs)
 
     def save_translation(self, translation, *args, **kwargs):
@@ -373,18 +408,12 @@ class Post(KnockerModel, ModelMeta, TranslatableModel):
             if '<day>' in urlconf:
                 kwargs['day'] = '%02d' % current_date.day
             if '<slug>' in urlconf:
-                kwargs['slug'] = self.safe_translation_getter('slug', language_code=lang, any_language=True)  # NOQA
+                kwargs['slug'] = self.safe_translation_getter(
+                    'slug', language_code=lang, any_language=True
+                )  # NOQA
             if '<category>' in urlconf:
-                kwargs['category'] = category.safe_translation_getter('slug', language_code=lang,
-                                                                      any_language=True)  # NOQA
+                kwargs['category'] = category.safe_translation_getter('slug', language_code=lang, any_language=True)  # NOQA
             return reverse('djangocms_blog:post-detail', kwargs=kwargs)
-
-    def get_meta_attribute(self, param):
-        """
-        Retrieves django-meta attributes from apphook config instance
-        :param param: django-meta attribute passed as key
-        """
-        return self._get_meta_value(param, getattr(self.app_config, param)) or ''
 
     def get_title(self):
         title = self.safe_translation_getter('meta_title', any_language=True)
@@ -402,9 +431,6 @@ class Post(KnockerModel, ModelMeta, TranslatableModel):
         :return: list
         """
         return self.safe_translation_getter('meta_keywords', default='').strip().split(',')
-
-    def get_locale(self):
-        return self.get_current_language()
 
     def get_description(self):
         description = self.safe_translation_getter('meta_description', any_language=True)
@@ -449,12 +475,6 @@ class Post(KnockerModel, ModelMeta, TranslatableModel):
             return self.main_image_full.as_dict
         else:
             return get_setting('IMAGE_FULL_SIZE')
-
-    def get_full_url(self):
-        """
-        Return the url with protocol and domain url
-        """
-        return self.build_absolute_uri(self.get_absolute_url())
 
     @property
     def is_published(self):

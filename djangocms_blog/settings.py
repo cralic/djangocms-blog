@@ -53,10 +53,17 @@ def get_setting(name):
             'upscale': False
         }),
 
+        'BLOG_URLCONF': getattr(settings, 'BLOG_URLCONF', 'djangocms_blog.urls'),
         'BLOG_PAGINATION': getattr(settings, 'BLOG_PAGINATION', 10),
         'BLOG_LATEST_POSTS': getattr(settings, 'BLOG_LATEST_POSTS', 5),
         'BLOG_POSTS_LIST_TRUNCWORDS_COUNT': getattr(
             settings, 'BLOG_POSTS_LIST_TRUNCWORDS_COUNT', 100
+        ),
+        'BLOG_META_DESCRIPTION_LENGTH': getattr(
+            settings, 'BLOG_META_DESCRIPTION_LENGTH', 320
+        ),
+        'BLOG_META_TITLE_LENGTH': getattr(
+            settings, 'BLOG_META_TITLE_LENGTH', 70
         ),
         'BLOG_MENU_TYPES': MENU_TYPES,
         'BLOG_MENU_EMPTY_CATEGORIES': getattr(settings, 'MENU_EMPTY_CATEGORIES', True),
@@ -79,6 +86,7 @@ def get_setting(name):
         'BLOG_ENABLE_COMMENTS': getattr(settings, 'BLOG_ENABLE_COMMENTS', True),
         'BLOG_USE_ABSTRACT': getattr(settings, 'BLOG_USE_ABSTRACT', True),
         'BLOG_USE_PLACEHOLDER': getattr(settings, 'BLOG_USE_PLACEHOLDER', True),
+        'BLOG_USE_RELATED': getattr(settings, 'BLOG_USE_RELATED', True),
         'BLOG_MULTISITE': getattr(settings, 'BLOG_MULTISITE', True),
         'BLOG_AUTHOR_DEFAULT': getattr(settings, 'BLOG_AUTHOR_DEFAULT', True),
         'BLOG_DEFAULT_PUBLISHED': getattr(settings, 'BLOG_DEFAULT_PUBLISHED', False),

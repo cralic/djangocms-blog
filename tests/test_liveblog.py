@@ -38,6 +38,8 @@ try:
             Channel('setup').send({'connect': 1, 'reply_channel': 'reply'})
             message = self.get_next_message('setup', require=True)
             liveblog_connect(message, self.app_config_1.namespace, 'en', post.slug)
+            result = self.get_next_message(message.reply_channel.name, require=True)
+            self.assertTrue(result['accept'])
 
             plugin = add_plugin(
                 post.liveblog, 'LiveblogPlugin', language='en', body='live text', publish=True
@@ -80,6 +82,8 @@ try:
             Channel('setup').send({'connect': 1, 'reply_channel': 'reply'})
             message = self.get_next_message('setup', require=True)
             liveblog_connect(message, self.app_config_1.namespace, 'en', post.slug)
+            result = self.get_next_message(message.reply_channel.name, require=True)
+            self.assertTrue(result['accept'])
 
             plugin = add_plugin(
                 post.liveblog, 'LiveblogPlugin', language='en', body='live text', publish=False
@@ -114,6 +118,8 @@ try:
             Channel('setup').send({'connect': 1, 'reply_channel': 'reply'})
             message = self.get_next_message('setup', require=True)
             liveblog_connect(message, self.app_config_1.namespace, 'en', post.slug)
+            result = self.get_next_message(message.reply_channel.name, require=True)
+            self.assertTrue(result['accept'])
 
             plugin = add_plugin(
                 post.liveblog, 'LiveblogPlugin', language='en', body='live text', publish=True
@@ -178,14 +184,12 @@ try:
             plugin = add_plugin(
                 post.liveblog, 'LiveblogPlugin', language='en', body='live text', publish=False
             )
-            context = self.get_plugin_context(pages[0], 'en', plugin, edit=False)
-            rendered = plugin.render_plugin(context, post.liveblog)
+            rendered = self.render_plugin(pages[0], 'en', plugin, edit=True)
             self.assertFalse(rendered.strip())
 
             plugin.publish = True
             plugin.save()
-            context = self.get_plugin_context(pages[0], 'en', plugin, edit=False)
-            rendered = plugin.render_plugin(context, post.liveblog)
+            rendered = self.render_plugin(pages[0], 'en', plugin, edit=True)
             self.assertTrue(rendered.find('data-post-id="{}"'.format(plugin.pk)) > -1)
             self.assertTrue(rendered.find('live text') > -1)
 

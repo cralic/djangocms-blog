@@ -46,6 +46,8 @@ Global Settings
   no abstract field is available for every post; (default: ``True``)
 * BLOG_USE_PLACEHOLDER: Post content is managed via placeholder;
   if ``False`` a simple HTMLField is used; (default: ``True``)
+* BLOG_USE_RELATED: Enable related posts to link one post to others;
+  (default: ``True``)
 * BLOG_MULTISITE: Add support for multisite setup; (default: ``True``)
 * BLOG_AUTHOR_DEFAULT: Use a default if not specified; if set to ``True`` the
   current user is set as the default author, if set to ``False`` no default
@@ -66,6 +68,7 @@ Global Settings
 * BLOG_AVAILABLE_PERMALINK_STYLES: Choices of permalinks styles;
 * BLOG_PERMALINK_URLS: URLConf corresponding to
   BLOG_AVAILABLE_PERMALINK_STYLES;
+* BLOG_URLCONF: Apphoo URLConf; (default: ``'djangocms_blog.urls'``);
 * BLOG_DEFAULT_OBJECT_NAME: Default name for Blog item (used in django CMS Wizard);
 * BLOG_AUTO_SETUP: Enable the blog **Auto setup** feature; (default: ``True``)
 * BLOG_AUTO_HOME_TITLE: Title of the home page created by **Auto setup**;
@@ -92,7 +95,10 @@ Global Settings
 * BLOG_FEED_LATEST_ITEMS: Number of items in latest items feed
 * BLOG_FEED_TAGS_ITEMS: Number of items in per tags feed
 * BLOG_PLUGIN_TEMPLATE_FOLDERS: (Sub-)folder from which the plugin templates are loaded. The default folder is ``plugins``. It goes into the ``djangocms_blog`` template folder (or, if set, the folder named in the app hook). This allows, e.g., different templates for showing a post list as tables, columns, ... . New templates have the same names as the standard templates in the ``plugins`` folder (``latest_entries.html``, ``authors.html``, ``tags.html``, ``categories.html``, ``archive.html``). Default behavior corresponds to this setting being ``( ("plugins", _("Default template") )``. To add new templates add to this setting, e.g., ``('timeline', _('Vertical timeline') )``.
-
+* BLOG_META_DESCRIPTION_LENGTH: Maximum length for the Meta description field (default: ``320``)
+* BLOG_META_TITLE_LENGTH: Maximum length for the Meta title field (default: ``70``)
+* BLOG_ABSTRACT_CKEDITOR: Configuration for the CKEditor of the abstract field (as per https://github.com/divio/djangocms-text-ckeditor/#customizing-htmlfield-editor)
+* BLOG_POST_TEXT_CKEDITOR: Configuration for the CKEditor of the post content field
 
 ******************
 Read-only settings
@@ -119,6 +125,7 @@ be used as defaults.
 * Use placeholder and plugins for article body: Per-Apphook setting for
   BLOG_USE_PLACEHOLDER;
 * Use abstract field: Per-Apphook setting for BLOG_USE_ABSTRACT;
+* Enable related posts: Per-Apphook setting for BLOG_USE_RELATED;
 * Set author: Per-Apphook setting for BLOG_AUTHOR_DEFAULT;
 * Paginate sizePer-Apphook setting for BLOG_PAGINATION;
 * Template prefix: Alternative directory to load the blog templates from;
