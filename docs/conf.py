@@ -13,9 +13,12 @@
 # serve to show the default.
 
 import os
+import shlex
 import sys
 
 import sphinx.environment
+# The theme to use for HTML and HTML Help pages.  See the documentation for
+# a list of builtin themes.
 import sphinx_rtd_theme
 from docutils.utils import get_source_line
 
@@ -30,7 +33,6 @@ sys.path.insert(0, os.path.join(parent, 'tests'))
 import cms_helper  # isort:skip
 import djangocms_blog  # isort:skip
 cms_helper.setup()
-
 
 
 def _warn_node(self, msg, node, *args, **kwargs):

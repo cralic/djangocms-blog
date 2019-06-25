@@ -10,10 +10,10 @@ from django.conf import settings as dj_settings
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.cache import cache
-from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.encoding import force_bytes, force_text, python_2_unicode_compatible
 from django.utils.functional import cached_property
@@ -21,6 +21,7 @@ from django.utils.html import escape, strip_tags
 from django.utils.translation import get_language, ugettext, ugettext_lazy as _
 from djangocms_text_ckeditor.fields import HTMLField
 from filer.fields.image import FilerImageField
+from filer.models import ThumbnailOption
 from meta.models import ModelMeta
 from parler.models import TranslatableModel, TranslatedFields
 from parler.utils.context import switch_language
@@ -36,14 +37,11 @@ BLOG_CURRENT_POST_IDENTIFIER = get_setting('CURRENT_POST_IDENTIFIER')
 BLOG_CURRENT_NAMESPACE = get_setting('CURRENT_NAMESPACE')
 BLOG_PLUGIN_TEMPLATE_FOLDERS = get_setting('PLUGIN_TEMPLATE_FOLDERS')
 
-try:  # pragma: no cover
-    from cmsplugin_filer_image.models import ThumbnailOption  # NOQA
-except ImportError:  # pragma: no cover
-    from filer.models import ThumbnailOption  # NOQA
 
 thumbnail_model = '%s.%s' % (
     ThumbnailOption._meta.app_label, ThumbnailOption.__name__
 )
+
 
 try:
     from knocker.mixins import KnockerModel
@@ -80,7 +78,8 @@ class BlogCategory(BlogMetaMixin, TranslatableModel):
     Blog category
     """
     parent = models.ForeignKey(
-        'self', verbose_name=_('parent'), null=True, blank=True, related_name='children'
+        'self', verbose_name=_('parent'), null=True, blank=True, related_name='children',
+        on_delete=models.CASCADE
     )
     date_created = models.DateTimeField(_('created at'), auto_now_add=True)
     date_modified = models.DateTimeField(_('modified at'), auto_now=True)
@@ -91,7 +90,8 @@ class BlogCategory(BlogMetaMixin, TranslatableModel):
     main_image = FilerImageField(
         verbose_name=_('Blog category image'),
         blank=True,
-        null=True
+        null=True,
+        on_delete=models.SET_NULL
     )
 
     order_by = models.PositiveIntegerField(default=0, blank=False, null=False)
@@ -230,7 +230,7 @@ class Post(KnockerModel, BlogMetaMixin, TranslatableModel):
     """
     author = models.ForeignKey(dj_settings.AUTH_USER_MODEL,
                                verbose_name=_('author'), null=True, blank=True,
-                               related_name='djangocms_blog_post_author')
+                               related_name='djangocms_blog_post_author', on_delete=models.PROTECT)
 
     date_created = models.DateTimeField(_('created'), auto_now_add=True)
     date_modified = models.DateTimeField(_('last modified'), auto_now=True)
@@ -593,7 +593,7 @@ class BasePostPlugin(CMSPlugin):
             posts = posts.on_site(get_current_site(request))
         posts = posts.active_translations(language_code=language)
         if (published_only or not request or not getattr(request, 'toolbar', False) or
-            not request.toolbar.edit_mode):
+                not request.toolbar.edit_mode_active):
             posts = posts.published(current_site=self.current_site)
         return self.optimize(posts.all())
 
@@ -659,10 +659,7 @@ class AuthorEntriesPlugin(BasePostPlugin):
         return force_text(_('%s latest articles by author') % self.latest_posts)
 
     def copy_relations(self, oldinstance):
-        try:
-            self.authors.set(oldinstance.authors.all())
-        except AttributeError:
-            self.authors = oldinstance.authors.all()
+        self.authors.set(oldinstance.authors.all())
 
     def get_posts(self, request, published_only=True):
         posts = self.post_queryset(request, published_only)
