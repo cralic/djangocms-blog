@@ -74,7 +74,7 @@ class BlogToolbar(CMSToolbar):
             self.add_publish_button()
 
     def add_copy_language_to_menu(self):
-        if self.toolbar.edit_mode:
+        if self.toolbar.edit_mode_active:
             language_menu = self.toolbar.get_menu(LANGUAGE_MENU_IDENTIFIER)
             if '{0}-copy'.format(LANGUAGE_MENU_IDENTIFIER) in language_menu.menus:
                 copy_menu_orig = language_menu.menus.pop('{0}-copy'.format(LANGUAGE_MENU_IDENTIFIER))
