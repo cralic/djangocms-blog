@@ -412,7 +412,8 @@ class Post(KnockerModel, BlogMetaMixin, TranslatableModel):
                     'slug', language_code=lang, any_language=True
                 )  # NOQA
             if '<category>' in urlconf:
-                kwargs['category'] = category.safe_translation_getter('slug', language_code=lang, any_language=True)  # NOQA
+                kwargs['category'] = category.safe_translation_getter(
+                    'slug', language_code=lang, any_language=True)  # NOQA
             return reverse('djangocms_blog:post-detail', kwargs=kwargs)
 
     def get_title(self):
@@ -658,7 +659,10 @@ class AuthorEntriesPlugin(BasePostPlugin):
         return force_text(_('%s latest articles by author') % self.latest_posts)
 
     def copy_relations(self, oldinstance):
-        self.authors = oldinstance.authors.all()
+        try:
+            self.authors.set(oldinstance.authors.all())
+        except AttributeError:
+            self.authors = oldinstance.authors.all()
 
     def get_posts(self, request, published_only=True):
         posts = self.post_queryset(request, published_only)

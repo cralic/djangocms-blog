@@ -5,6 +5,29 @@ History
 =======
 
 ******************
+0.9.10 (unreleased)
+******************
+
+* Fixed allow_unicode kwarg for AutoSlugField
+* Fixed sphinx conf isort
+* Set category as requested or not depending on the permalink setting
+
+******************
+0.9.9 (2019-04-05)
+******************
+
+* Fixed issue with thumbnails not being preserved in admin form
+* Pinned django-taggit version
+
+******************
+0.9.8 (2019-01-13)
+******************
+
+* Fixed test environment in Django 1.8, 1.9
+* Added related posts to templates / documentation
+* Added a fix for multiple error messages when slug is not unique
+
+******************
 0.9.7 (2018-05-05)
 ******************
 

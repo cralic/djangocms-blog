@@ -29,7 +29,9 @@ from taggit.models import Tag
 from djangocms_blog.cms_appconfig import BlogConfig, BlogConfigForm
 from djangocms_blog.forms import CategoryAdminForm, PostAdminForm
 from djangocms_blog.models import BlogCategory, Post
-from djangocms_blog.settings import MENU_TYPE_NONE, get_setting
+from djangocms_blog.settings import (
+    MENU_TYPE_NONE, PERMALINK_TYPE_CATEGORY, PERMALINK_TYPE_FULL_DATE, get_setting,
+)
 
 from .base import BaseTest
 
@@ -71,6 +73,77 @@ class AdminTest(BaseTest):
             crop=True,
             upscale=True,
         )
+
+    def test_admin_thumbnails(self):
+        self.get_pages()
+
+        custom_thumbnail = ThumbnailOption.objects.create(
+            name='Custom thumbnail', width=120, height=120, crop=True, upscale=True,
+        )
+        custom_full = ThumbnailOption.objects.create(
+            name='Custom image', width=800, height=200, crop=True, upscale=True,
+        )
+
+        post_admin = admin.site._registry[Post]
+        request = self.get_page_request('/', self.user, r'/en/blog/', edit=False)
+
+        post = self._get_post(self._post_data[0]['en'])
+        post = self._get_post(self._post_data[0]['it'], post, 'it')
+
+        response = post_admin.change_view(request, str(post.pk))
+        response.render()
+        self.assertRegexpMatches(force_text(response.content), r'[^>]*>Custom image')
+        self.assertRegexpMatches(force_text(response.content), r'[^>]*>Custom thumbnail')
+        self.assertRegexpMatches(force_text(response.content), r'[^>]*>Blog image')
+        self.assertRegexpMatches(force_text(response.content), r'[^>]*>Blog thumbnail')
+
+        post.main_image_full = custom_full
+        post.main_image_thumbnail = custom_thumbnail
+        post.save()
+        response = post_admin.change_view(request, str(post.pk))
+        response.render()
+        self.assertRegexpMatches(force_text(response.content), r'selected[^>]*>Custom image')
+        self.assertRegexpMatches(force_text(response.content), r'selected[^>]*>Custom thumbnail')
+
+        self.app_config_1.app_data.config.default_image_full = self.default_full
+        self.app_config_1.app_data.config.default_image_thumbnail = self.default_thumbnail
+        self.app_config_1.save()
+        post.main_image_full = None
+        post.main_image_thumbnail = None
+        post.save()
+
+        response = post_admin.change_view(request, str(post.pk))
+        response.render()
+        self.assertRegexpMatches(force_text(response.content), r'selected[^>]*>Blog image')
+        self.assertRegexpMatches(force_text(response.content), r'selected[^>]*>Blog thumbnail')
+
+    def test_admin_category_required(self):
+        self.get_pages()
+
+        post_admin = admin.site._registry[Post]
+        request = self.get_page_request('/', self.user, r'/en/blog/', edit=False)
+        BlogCategory.objects.create(name='category 1 - blog 2', app_config=self.app_config_2)
+
+        post = self._get_post(self._post_data[0]['en'])
+        post = self._get_post(self._post_data[0]['it'], post, 'it')
+
+        response = post_admin.change_view(request, str(post.pk))
+        self.assertEqual(
+            response.context_data['adminform'].form.fields['categories'].required,
+            self.app_config_1.url_patterns == PERMALINK_TYPE_CATEGORY
+        )
+
+        self.app_config_1.app_data.config.url_patterns = PERMALINK_TYPE_CATEGORY
+        self.app_config_1.save()
+
+        response = post_admin.change_view(request, str(post.pk))
+        self.assertEqual(
+            response.context_data['adminform'].form.fields['categories'].required,
+            self.app_config_1.url_patterns == PERMALINK_TYPE_CATEGORY
+        )
+
+        self.app_config_1.app_data.config.url_patterns = PERMALINK_TYPE_FULL_DATE
+        self.app_config_1.save()
 
     def test_admin_post_views(self):
         self.get_pages()
@@ -214,17 +287,17 @@ class AdminTest(BaseTest):
         request.POST = QueryDict('app_config=1')
         request.method = 'POST'
         response = category_admin.add_view(request)
-        self.assertTrue(
-            response.context_data['adminform'].form.fields['parent'].queryset,
-            BlogCategory.objects.filter(app_config=self.app_config_1)
+        self.assertEqual(
+            list(response.context_data['adminform'].form.fields['parent'].queryset),
+            list(BlogCategory.objects.filter(app_config=self.app_config_1))
         )
 
         request.GET = QueryDict('app_config=1')
         request.method = 'GET'
         response = category_admin.add_view(request)
-        self.assertTrue(
-            response.context_data['adminform'].form.fields['parent'].queryset,
-            BlogCategory.objects.filter(app_config=self.app_config_1)
+        self.assertEqual(
+            list(response.context_data['adminform'].form.fields['parent'].queryset),
+            list(BlogCategory.objects.filter(app_config=self.app_config_1))
         )
 
         # Changeview is 'normal', with a few preselected items

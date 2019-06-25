@@ -11,6 +11,7 @@ from taggit_autosuggest.widgets import TagAutoSuggest
 from djangocms_blog.settings import get_setting
 
 from .models import BlogCategory, BlogConfig, Post
+from .settings import PERMALINK_TYPE_CATEGORY, get_setting
 
 
 class ConfigFormBase(object):
@@ -97,6 +98,14 @@ class PostAdminFormBase(ConfigFormBase, TranslatableModelForm):
             return qs.namespace(self.app_config.namespace).active_translations()
         return qs
 
+    def _post_clean_translation(self, translation):
+        # This is a quickfix for https://github.com/django-parler/django-parler/issues/236
+        # which needs to be fixed in parler
+        # operating at form level ensure that if the model is validated outside the form
+        # the uniqueness check is not disabled
+        super(PostAdminFormBase, self)._post_clean_translation(translation)
+        self._validate_unique = False
+
 
 class PostAdminForm(PostAdminFormBase):
 
@@ -116,6 +125,8 @@ class PostAdminForm(PostAdminFormBase):
         ]
         super(PostAdminForm, self).__init__(*args, **kwargs)
         if 'categories' in self.fields:
+            if self.app_config and self.app_config.url_patterns == PERMALINK_TYPE_CATEGORY:
+                self.fields['categories'].required = True
             self.fields['categories'].queryset = self.available_categories
 
         if 'app_config' in self.fields:
@@ -124,7 +135,9 @@ class PostAdminForm(PostAdminFormBase):
             self.fields['app_config'].widget.can_add_related = False
 
         if self.app_config:
-            self.initial['main_image_full'] = \
-                self.app_config.app_data['config'].get('default_image_full')
-            self.initial['main_image_thumbnail'] = \
-                self.app_config.app_data['config'].get('default_image_thumbnail')
+            if not self.initial.get('main_image_full', ''):
+                self.initial['main_image_full'] = \
+                    self.app_config.app_data['config'].get('default_image_full')
+            if not self.initial.get('main_image_thumbnail', ''):
+                self.initial['main_image_thumbnail'] = \
+                    self.app_config.app_data['config'].get('default_image_thumbnail')
