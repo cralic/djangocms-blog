@@ -108,6 +108,12 @@ class BlogCategory(BlogMetaMixin, TranslatableModel):
         meta_description=models.TextField(
             verbose_name=_('category meta description'), blank=True, default=''
         ),
+        meta_keywords=models.TextField(verbose_name=_('post meta keywords'),
+                                       blank=True, default=''),
+        meta_title=models.CharField(verbose_name=_('post meta title'),
+                                    help_text=_('used in title tag and social sharing'),
+                                    max_length=255,
+                                    blank=True, default=''),
         meta={'unique_together': (('language_code', 'slug'),)}
     )
 
@@ -132,6 +138,8 @@ class BlogCategory(BlogMetaMixin, TranslatableModel):
         'twitter_author': 'get_meta_attribute',
         'gplus_type': 'get_meta_attribute',
         'gplus_author': 'get_meta_attribute',
+        'keywords': 'get_keywords',
+        'image': 'get_image_full_url',
         'url': 'get_absolute_url',
     }
 
