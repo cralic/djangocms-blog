@@ -7,6 +7,11 @@ MENU_TYPE_POSTS = 'posts'
 MENU_TYPE_NONE = 'none'
 DATE_FORMAT = "%a %d %b %Y %H:%M"
 
+PERMALINK_TYPE_FULL_DATE = 'full_date'
+PERMALINK_TYPE_SHORT_DATE = 'short_date'
+PERMALINK_TYPE_CATEGORY = 'category'
+PERMALINK_TYPE_SLUG = 'slug'
+
 
 def get_setting(name):
     from django.conf import settings
@@ -14,16 +19,24 @@ def get_setting(name):
     from meta import settings as meta_settings
 
     PERMALINKS = (
-        ('full_date', _('Full date')),
-        ('short_date', _('Year /  Month')),
-        ('category', _('Category')),
-        ('slug', _('Just slug')),
+        (PERMALINK_TYPE_FULL_DATE, _('Full date')),
+        (PERMALINK_TYPE_SHORT_DATE, _('Year /  Month')),
+        (PERMALINK_TYPE_CATEGORY, _('Category')),
+        (PERMALINK_TYPE_SLUG, _('Just slug')),
     )
     PERMALINKS_URLS = {
-        'full_date': r'^(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<slug>\w[-\w]*)/$',
-        'short_date': r'^(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<slug>\w[-\w]*)/$',
-        'category': r'^(?P<category>\w[-\w]*)/(?P<slug>\w[-\w]*)/$',
-        'slug': r'^(?P<slug>\w[-\w]*)/$',
+        PERMALINK_TYPE_FULL_DATE: (
+            r'^(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<day>\d{1,2})/(?P<slug>\w[-\w]*)/$'
+        ),
+        PERMALINK_TYPE_SHORT_DATE: (
+            r'^(?P<year>\d{4})/(?P<month>\d{1,2})/(?P<slug>\w[-\w]*)/$'
+        ),
+        PERMALINK_TYPE_CATEGORY: (
+            r'^(?P<category>\w[-\w]*)/(?P<slug>\w[-\w]*)/$'
+        ),
+        PERMALINK_TYPE_SLUG: (
+            r'^(?P<slug>\w[-\w]*)/$'
+        ),
     }
     MENU_TYPES = (
         (MENU_TYPE_COMPLETE, _('Categories and posts')),
@@ -53,10 +66,17 @@ def get_setting(name):
             'upscale': False
         }),
 
+        'BLOG_URLCONF': getattr(settings, 'BLOG_URLCONF', 'djangocms_blog.urls'),
         'BLOG_PAGINATION': getattr(settings, 'BLOG_PAGINATION', 10),
         'BLOG_LATEST_POSTS': getattr(settings, 'BLOG_LATEST_POSTS', 5),
         'BLOG_POSTS_LIST_TRUNCWORDS_COUNT': getattr(
             settings, 'BLOG_POSTS_LIST_TRUNCWORDS_COUNT', 100
+        ),
+        'BLOG_META_DESCRIPTION_LENGTH': getattr(
+            settings, 'BLOG_META_DESCRIPTION_LENGTH', 320
+        ),
+        'BLOG_META_TITLE_LENGTH': getattr(
+            settings, 'BLOG_META_TITLE_LENGTH', 70
         ),
         'BLOG_MENU_TYPES': MENU_TYPES,
         'BLOG_MENU_EMPTY_CATEGORIES': getattr(settings, 'MENU_EMPTY_CATEGORIES', True),
@@ -79,6 +99,7 @@ def get_setting(name):
         'BLOG_ENABLE_COMMENTS': getattr(settings, 'BLOG_ENABLE_COMMENTS', True),
         'BLOG_USE_ABSTRACT': getattr(settings, 'BLOG_USE_ABSTRACT', True),
         'BLOG_USE_PLACEHOLDER': getattr(settings, 'BLOG_USE_PLACEHOLDER', True),
+        'BLOG_USE_RELATED': getattr(settings, 'BLOG_USE_RELATED', True),
         'BLOG_MULTISITE': getattr(settings, 'BLOG_MULTISITE', True),
         'BLOG_AUTHOR_DEFAULT': getattr(settings, 'BLOG_AUTHOR_DEFAULT', True),
         'BLOG_DEFAULT_PUBLISHED': getattr(settings, 'BLOG_DEFAULT_PUBLISHED', False),

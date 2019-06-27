@@ -8,6 +8,9 @@
 <article id="post-{{ post.slug }}" class="post-item post-detail">
     <header>
         <h2>{% render_model post "title" %}</h2>
+        {% if post.subtitle %}
+            <h3>{% render_model post "subtitle" %}</h3>
+        {% endif %}
         {% block blog_meta %}
             {% include "djangocms_blog/includes/blog_meta.html" %}
         {% endblock %}
@@ -26,6 +29,13 @@
     {% endif %}
     {% if view.liveblog_enabled %}
         {% include "liveblog/includes/post_detail.html" %}
+    {% endif %}
+    {% if post.related.exists %}
+        <section class="post-detail-list">
+        {% for related in post.related.all %}
+            {% include "djangocms_blog/includes/blog_item.html" with post=related image="true" TRUNCWORDS_COUNT=TRUNCWORDS_COUNT %}
+        {% endfor %}
+        </section>
     {% endif %}
 </article>
 {% endblock content_blog %}
