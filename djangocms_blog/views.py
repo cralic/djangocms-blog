@@ -9,9 +9,9 @@ from cms.utils import get_language_list, copy_plugins
 from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ImproperlyConfigured
-from django.core.urlresolvers import reverse
 from django.db import transaction
-from django.http import HttpResponseBadRequest, HttpResponse, JsonResponse
+from django.http import HttpResponseBadRequest, HttpResponse, JsonResponse, Http404
+from django.urls import reverse
 from django.utils.encoding import force_text
 from django.utils.timezone import now
 from django.utils.translation import get_language
@@ -59,7 +59,7 @@ class BaseBlogView(AppConfigMixin, ViewUrlMixin):
         queryset = self.model._default_manager.active_translations(
             language_code=language
         )
-        if not getattr(self.request, 'toolbar', False) or not self.request.toolbar.edit_mode:
+        if not getattr(self.request, 'toolbar', None) or not self.request.toolbar.edit_mode_active:
             queryset = queryset.published()
         setattr(self.request, get_setting('CURRENT_NAMESPACE'), self.config)
         return self.optimize(queryset.on_site())
@@ -107,7 +107,7 @@ class PostDetailView(TranslatableSlugMixin, BaseBlogView, DetailView):
 
     def get_queryset(self):
         queryset = self.model._default_manager.all()
-        if not getattr(self.request, 'toolbar', False) or not self.request.toolbar.edit_mode:
+        if not getattr(self.request, 'toolbar', None) or not self.request.toolbar.edit_mode_active:
             queryset = queryset.published()
         return self.optimize(queryset)
 
@@ -225,7 +225,10 @@ class AuthorEntriesView(BaseBlogListView, ListView):
         return self.optimize(qs)
 
     def get_context_data(self, **kwargs):
-        kwargs['author'] = User.objects.get(**{User.USERNAME_FIELD: self.kwargs.get('username')})
+        kwargs['author'] = get_object_or_404(
+            User,
+            **{User.USERNAME_FIELD: self.kwargs.get('username')}
+        )
         context = super(AuthorEntriesView, self).get_context_data(**kwargs)
         return context
 
@@ -237,10 +240,12 @@ class CategoryEntriesView(BaseBlogListView, ListView):
     @property
     def category(self):
         if not self._category:
-            self._category = get_object_or_404(
-                BlogCategory,
-                translations__slug=self.kwargs['category']
-            )
+            try:
+                self._category = BlogCategory.objects.active_translations(
+                    get_language(), slug=self.kwargs['category']
+                ).get()
+            except BlogCategory.DoesNotExist:
+                raise Http404
         return self._category
 
     def get(self, *args, **kwargs):

@@ -4,11 +4,99 @@
 History
 =======
 
+
 ******************
-0.9.0 (unreleased)
+1.0.0 (unreleased)
 ******************
 
-* Added support for django CMS 3.4
+* Added Djando 2.0, 2.1
+* Added django CMS 3.6
+* Dropped Django <1.11
+* Dropped django CMS <3.5
+* Dropped Python 3.4
+
+******************
+0.9.9 (2019-04-05)
+******************
+
+* Fixed issue with thumbnails not being preserved in admin form
+* Pinned django-taggit version
+
+******************
+0.9.10 (unreleased)
+******************
+
+* Fixed allow_unicode kwarg for AutoSlugField
+* Fixed sphinx conf isort
+* Set category as requested or not depending on the permalink setting
+
+******************
+0.9.9 (2019-04-05)
+******************
+
+* Fixed issue with thumbnails not being preserved in admin form
+* Pinned django-taggit version
+
+******************
+0.9.8 (2019-01-13)
+******************
+
+* Fixed test environment in Django 1.8, 1.9
+* Added related posts to templates / documentation
+* Added a fix for multiple error messages when slug is not unique
+
+******************
+0.9.7 (2018-05-05)
+******************
+
+* Fixed subtitle field not added to the admin
+
+******************
+0.9.6 (2018-05-02)
+******************
+
+* Fixed string representation when model has no language
+* Added subtitle field
+
+******************
+0.9.5 (2018-04-07)
+******************
+
+* Fixed jquery path in Django 1.9+"Fix jquery path in Django 1.9+
+* Added configurable blog abstract/text CKEditor
+
+******************
+0.9.4 (2018-03-24)
+******************
+
+* Fixed migration error from 0.8 to 0.9
+
+******************
+0.9.3 (2018-03-12)
+******************
+
+* Added dependency on lxml used in feeds
+* Fixed warning on django CMS 3.5
+* Fixed wizard in Django 1.11
+* Updated translations
+
+******************
+0.9.2 (2018-02-27)
+******************
+
+* Fixed missing migration
+
+******************
+0.9.1 (2018-02-22)
+******************
+
+* Added Django 1.11 support
+
+******************
+0.9.0 (2018-02-20)
+******************
+
+* Added support for django CMS 3.4, 3.5
 * Dropped support for Django<1.8, django CMS<3.2.
 * Added liveblog application.
 * Refactored plugin filters: by default only data for current site are now shown.
@@ -22,8 +110,15 @@ History
 * Improved admin filtering.
 * Added featured date to post.
 * Fixed issue with urls in sitemap if apphook is not published
-* Use the easy_thumbnails_tags template tag. Require easy_thumbnails >= 2.4.1
-
+* Moved template to easy_thumbnails_tags template tag. Require easy_thumbnails >= 2.4.1
+* Made HTML description and title fields length configurable
+* Added meta representation for CategoryEntriesView
+* Generated valid slug in wizard if the given one is taken
+* Fixed error in category filtering when loading the for via POST
+* Returned 404 in AuthorEntriesView if author does not exists
+* Returned 404 in CategoryEntriesView if category does not exists
+* Generate valid slug in wizard if the given one is taken
+* Limit categories / related in forms only to current lan
 
 *******************
 0.8.13 (2017-07-25)

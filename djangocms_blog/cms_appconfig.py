@@ -7,6 +7,7 @@ from app_data import AppDataForm
 from django import forms
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from filer.models import ThumbnailOption
 from parler.models import TranslatableModel, TranslatedFields
 
 from .settings import MENU_TYPE_COMPLETE, get_setting
@@ -36,6 +37,20 @@ class BlogConfigForm(AppDataForm):
         label=_('Post published by default'), required=False,
         initial=get_setting('DEFAULT_PUBLISHED')
     )
+    default_image_full = forms.ModelChoiceField(
+        label=_('Default size of full images'),
+        queryset=ThumbnailOption.objects.all(),
+        required=False,
+        help_text=_('If left empty the image size will have to be set for '
+                    'every newly created post.'),
+    )
+    default_image_thumbnail = forms.ModelChoiceField(
+        label=_('Default size of thumbnail images'),
+        queryset=ThumbnailOption.objects.all(),
+        required=False,
+        help_text=_('If left empty the thumbnail image size will have to be '
+                    'set for every newly created post.'),
+    )
     url_patterns = forms.ChoiceField(
         label=_('Permalink structure'), required=False,
         initial=get_setting('AVAILABLE_PERMALINK_STYLES')[0][0],
@@ -48,6 +63,10 @@ class BlogConfigForm(AppDataForm):
     use_abstract = forms.BooleanField(
         label=_('Use abstract field'), required=False,
         initial=get_setting('USE_ABSTRACT')
+    )
+    use_related = forms.BooleanField(
+        label=_('Enable related posts'), required=False,
+        initial=get_setting('USE_RELATED')
     )
     set_author = forms.BooleanField(
         label=_('Set author'), required=False, help_text=_('Set author by default'),
