@@ -17,10 +17,11 @@ from django.http import HttpResponseRedirect
 from django.utils.six import callable, text_type
 from django.utils.translation import get_language_from_request, ugettext_lazy as _
 from parler.admin import TranslatableAdmin
+from django.contrib import admin
 
 from .cms_appconfig import BlogConfig
 from .forms import CategoryAdminForm, PostAdminForm
-from .models import BlogCategory, Post
+from .models import BlogCategory, Post, CallToAction
 from .settings import get_setting
 
 try:
@@ -72,6 +73,10 @@ class BlogCategoryAdmin(EnhancedModelAdminMixin, ModelAppHookConfig, Translatabl
         }
 
 
+@admin.register(CallToAction)
+class CallToActionAdmin(admin.ModelAdmin):
+    pass
+
 class PostAdmin(PlaceholderAdminMixin, FrontendEditableAdminMixin,
                 ModelAppHookConfig, TranslatableAdmin):
     form = PostAdminForm
@@ -86,7 +91,7 @@ class PostAdmin(PlaceholderAdminMixin, FrontendEditableAdminMixin,
     enhance_exclude = ('main_image', 'tags')
     _fieldsets = [
         (None, {
-            'fields': [['title', 'categories', 'publish', 'app_config', 'recommended', 'pinned']]
+            'fields': [['title', 'categories', 'publish', 'app_config', 'recommended', 'pinned', 'call_to_action']]
         }),
         (_('Related'), {
             'fields': [['related', ]]
