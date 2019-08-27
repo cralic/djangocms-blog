@@ -17,10 +17,11 @@ from django.utils import timezone
 from django.utils.six import callable, text_type
 from django.utils.translation import get_language_from_request, ugettext_lazy as _, ungettext as __
 from parler.admin import TranslatableAdmin
+from django.contrib import admin
 
 from .cms_appconfig import BlogConfig
 from .forms import CategoryAdminForm, PostAdminForm
-from .models import BlogCategory, Post
+from .models import BlogCategory, Post, CallToAction
 from .settings import get_setting
 
 
@@ -66,6 +67,10 @@ class BlogCategoryAdmin(ModelAppHookConfig, TranslatableAdmin):
         }
 
 
+@admin.register(CallToAction)
+class CallToActionAdmin(admin.ModelAdmin):
+    pass
+
 class PostAdmin(PlaceholderAdminMixin, FrontendEditableAdminMixin,
                 ModelAppHookConfig, TranslatableAdmin):
     form = PostAdminForm
@@ -90,7 +95,7 @@ class PostAdmin(PlaceholderAdminMixin, FrontendEditableAdminMixin,
         (None, {
             'fields': [
                 ['title', 'subtitle', 'publish'],
-                ['categories', 'app_config', 'recommended', 'pinned']
+                ['categories', 'app_config', 'recommended', 'pinned', 'call_to_action']
             ]
         }),
         (None, {
