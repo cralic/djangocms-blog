@@ -6,11 +6,13 @@ import os.path
 from aldryn_apphooks_config.mixins import AppConfigMixin
 from cms.models.fields import PlaceholderField
 from cms.utils import get_language_list, copy_plugins
+from dal import autocomplete
 from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
 from django.db import transaction
+from django.db.models import Q
 from django.http import HttpResponseBadRequest, HttpResponse, JsonResponse
 from django.utils.encoding import force_text
 from django.utils.timezone import now
@@ -58,7 +60,7 @@ class BaseBlogView(AppConfigMixin, ViewUrlMixin):
         language = get_language()
         queryset = self.model._default_manager.active_translations(
             language_code=language
-        )
+        ).translated(language_code=language)
         if not getattr(self.request, 'toolbar', False) or not self.request.toolbar.edit_mode:
             queryset = queryset.published()
         setattr(self.request, get_setting('CURRENT_NAMESPACE'), self.config)
@@ -70,8 +72,8 @@ class BaseBlogView(AppConfigMixin, ViewUrlMixin):
 
     def get_context_data(self, **kwargs):
         context = super(BaseBlogView, self).get_context_data(**kwargs)
-        context['categories'] = BlogCategory.objects.all()
-        context['tags_list'] = Tag.objects.all()
+        context['categories'] = BlogCategory.objects.all().translated(language_code=self.request.LANGUAGE_CODE)
+        context['tags_list'] = Tag.objects.filter(language_code=self.request.LANGUAGE_CODE)
         return context
 
 
@@ -206,7 +208,7 @@ class TaggedListView(BaseBlogListView, ListView):
 
     def get_queryset(self):
         qs = super(TaggedListView, self).get_queryset()
-        return self.optimize(qs.filter(tags__slug=self.kwargs['tag']))
+        return self.optimize(qs.filter(tags__slug=self.kwargs['tag'], tags__language_code=self.request.LANGUAGE_CODE))
 
     def get_context_data(self, **kwargs):
         kwargs['tagged_entries'] = (self.kwargs.get('tag')
@@ -260,6 +262,23 @@ class CategoryEntriesView(BaseBlogListView, ListView):
         context = super(CategoryEntriesView, self).get_context_data(**kwargs)
         context['meta'] = self.category.as_meta()
         return context
+
+
+class PostAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+        if not self.request.user.is_authenticated() or (
+                not self.request.user.is_superuser and not self.request.user.has_perm('djangocms_blog.change_post')):
+            return Post.objects.none()
+
+        qs = Post.objects.filter(translations__language_code=self.request.LANGUAGE_CODE)
+
+        if self.q:
+            qs = Post.objects.filter(translations__language_code=self.request.LANGUAGE_CODE).filter(
+                Q(translations__title__icontains=self.q) |
+                Q(translations__slug__icontains=self.q)
+            ).all()
+        return qs
 
 
 @transaction.atomic

@@ -127,7 +127,8 @@ class BlogCategory(ModelMeta, TranslatableModel):
 
     @cached_property
     def linked_posts(self):
-        return self.blog_posts.namespace(self.app_config.namespace)
+        language = get_language()
+        return self.blog_posts.namespace(self.app_config.namespace).translated(language_code=language)
 
     @cached_property
     def count(self):
@@ -315,6 +316,10 @@ class Post(KnockerModel, ModelMeta, TranslatableModel):
 
     def __str__(self):
         return self.safe_translation_getter('title', any_language=True)
+
+    @property
+    def title_prop(self):
+        return self.get_title()
 
     @property
     def guid(self, language=None):

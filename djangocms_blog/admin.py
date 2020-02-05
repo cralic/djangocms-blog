@@ -76,7 +76,7 @@ class PostAdmin(PlaceholderAdminMixin, FrontendEditableAdminMixin,
                 ModelAppHookConfig, TranslatableAdmin):
     form = PostAdminForm
     list_display = [
-        'title', 'author', 'date_published', 'app_config', 'all_languages_column',
+        'title_prop', 'author', 'date_published', 'app_config', 'all_languages_column',
         'date_published_end'
     ]
     search_fields = ('translations__title',)

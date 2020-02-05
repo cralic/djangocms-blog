@@ -7,7 +7,7 @@ from .feeds import FBInstantArticles, LatestEntriesFeed, TagFeed
 from .settings import get_setting
 from .views import (
     AuthorEntriesView, CategoryEntriesView, PostArchiveView, PostDetailView, PostListView,
-    TaggedListView, MostReadPostsView, RecommendedPostsView, FavouritesPostsView,
+    TaggedListView, MostReadPostsView, RecommendedPostsView, FavouritesPostsView, PostAutocomplete,
     copy_language)
 
 
@@ -51,4 +51,5 @@ urlpatterns = [
     url(_(r'^tag/(?P<tag>[-\w]+)/feed/$'),
         TagFeed(), name='posts-tagged-feed'),
     url(r'^copy_language/(?P<post_id>\d+)$', copy_language, name='copy-language-blog'),
+    url(r'^post-autocomplete/$', PostAutocomplete.as_view(), name='post-autocomplete', ),
 ] + detail_urls
