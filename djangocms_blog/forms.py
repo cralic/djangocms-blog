@@ -65,6 +65,8 @@ class PostAdminForm(TranslatableModelForm):
         if 'categories' in self.fields:
             self.fields['categories'].queryset = qs
 
+        if 'tags' in self.fields:
+            self.fields['tags'].widget.language_code = self.request.GET.get('language', self.request.LANGUAGE_CODE)
         if 'app_config' in self.fields:
             # Don't allow app_configs to be added here. The correct way to add an
             # apphook-config is to create an apphook on a cms Page.

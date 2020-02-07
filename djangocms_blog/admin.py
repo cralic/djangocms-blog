@@ -112,6 +112,11 @@ class PostAdmin(PlaceholderAdminMixin, FrontendEditableAdminMixin,
     }
     _sites = None
 
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        form.request = request
+        return form
+
     def get_list_filter(self, request):
         filters = ['app_config', 'publish', 'date_published']
         if get_setting('MULTISITE'):
