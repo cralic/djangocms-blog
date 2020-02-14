@@ -25,8 +25,11 @@ from django.utils.translation import ugettext_lazy as _
 from .models import BlogCategory, Post
 from taggit.models import Tag
 from .settings import get_setting
-
+from django.conf import settings
 User = get_user_model()
+from django.utils import translation
+from parler.utils.context import switch_language
+from django.core.cache import cache
 
 
 class BaseBlogView(AppConfigMixin, ViewUrlMixin):
@@ -76,6 +79,22 @@ class BaseBlogView(AppConfigMixin, ViewUrlMixin):
         context['tags_list'] = Tag.objects.filter(language_code=self.request.LANGUAGE_CODE)
         return context
 
+    def get_href_lang(self, to_translate):
+        def _get_href_lang(to_translate):
+            request_language = translation.get_language()
+            hreflangs = []
+            object_translations = list(to_translate.translations.all().values_list('language_code', flat=True))
+            for code, domains in settings.HREFLANG_LANGUAGES.items():
+                if request_language != code and code in object_translations:
+                    with switch_language(to_translate, code):
+                        translation.activate(code)
+                        lang_url = to_translate.get_absolute_url()
+                        for domain in domains:
+                            hreflangs.append((code, "{}{}".format(domain, lang_url),))
+            translation.activate(request_language)
+            return hreflangs
+        return cache.get_or_set('hreflang.{}.{}.{}.{}.{}'.format(self.request.alias.site.id, self.request.alias.id, translation.get_language(), "{}:{}".format(to_translate._meta.app_label, to_translate.__class__.__name__), to_translate.id), lambda: _get_href_lang(to_translate), timeout=10 * 60)
+
 
 class BaseBlogListView(BaseBlogView):
     context_object_name = 'post_list'
@@ -121,6 +140,7 @@ class PostDetailView(TranslatableSlugMixin, BaseBlogView, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(PostDetailView, self).get_context_data(**kwargs)
+        context.update({'hreflangs': self.get_href_lang(self.object)})
         context['meta'] = self.get_object().as_meta()
         context['instant_article'] = self.instant_article
         context['use_placeholder'] = get_setting('USE_PLACEHOLDER')
@@ -260,6 +280,7 @@ class CategoryEntriesView(BaseBlogListView, ListView):
     def get_context_data(self, **kwargs):
         kwargs['category'] = self.category
         context = super(CategoryEntriesView, self).get_context_data(**kwargs)
+        context.update({'hreflangs': self.get_href_lang(self.category)})
         context['meta'] = self.category.as_meta()
         return context
 
