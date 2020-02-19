@@ -189,12 +189,29 @@ class BlogCategory(ModelMeta, TranslatableModel):
                 self.slug = slugify(force_text(self.name))
         self.save_translations()
 
+class CallToAction(models.Model):
+    title = models.CharField(
+        max_length=200,
+        verbose_name=_('Title')
+    )
+    url = models.URLField(max_length=200)
+    short_text = models.CharField(max_length=400)
+    button_text = models.CharField(max_length=100)
+    date_created = models.DateTimeField(_('created'), auto_now_add=True)
+    class Meta:
+        verbose_name = _('call to action')
+        verbose_name_plural = _('calls to action')
+        ordering = ('-date_created',)
+
+    def __str__(self):
+        return self.title
 
 @python_2_unicode_compatible
 class Post(KnockerModel, ModelMeta, TranslatableModel):
     """
     Blog post
     """
+    call_to_action = models.ForeignKey('CallToAction', verbose_name=_('Call to Action'), null=True, blank=True, related_name='djangocms_blog_post_cta')
     author = models.ForeignKey(dj_settings.AUTH_USER_MODEL,
                                verbose_name=_('author'), null=True, blank=True,
                                related_name='djangocms_blog_post_author')
