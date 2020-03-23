@@ -177,11 +177,11 @@ class PostArchiveView(BaseBlogListView, ListView):
 
 class RecommendedPostsView(PostListView):
     def get_queryset(self):
-        query = Post.objects.filter(recommended=True).order_by('-date_published')
-        self.count = query.count()
+        qs = super().get_queryset().filter(recommended=True).order_by('-date_published')
+        self.count = qs.count()
         if self.request.is_ajax():
-            query = query[self.get_offset(self.request):(self.get_offset(self.request) + self.get_limit(self.request))]
-        return query
+            qs = qs[self.get_offset(self.request):(self.get_offset(self.request) + self.get_limit(self.request))]
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -193,11 +193,12 @@ class RecommendedPostsView(PostListView):
 
 class MostReadPostsView(PostListView):
     def get_queryset(self):
-        query = sorted(Post.objects.all(), key=lambda x: x.get_hits(), reverse=True)
-        self.count = Post.objects.all()
+        qs = super().get_queryset()
+        qs = sorted(qs, key=lambda x: x.get_hits(), reverse=True)
+        self.count = qs
         if self.request.is_ajax():
-            query = query[self.get_offset(self.request):(self.get_offset(self.request) + self.get_limit(self.request))]
-        return query
+            qs = qs[self.get_offset(self.request):(self.get_offset(self.request) + self.get_limit(self.request))]
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -209,11 +210,11 @@ class MostReadPostsView(PostListView):
 
 class FavouritesPostsView(PostListView):
     def get_queryset(self):
-        query = Post.objects.all().order_by('-date_created')
-        self.count = query.count()
+        qs = super().get_queryset().order_by('-date_created')
+        self.count = qs.count()
         if self.request.is_ajax():
-            query = query[self.get_offset(self.request):(self.get_offset(self.request) + self.get_limit(self.request))]
-        return query
+            qs = qs[self.get_offset(self.request):(self.get_offset(self.request) + self.get_limit(self.request))]
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -227,7 +228,7 @@ class TaggedListView(BaseBlogListView, ListView):
     view_url_name = 'djangocms_blog:posts-tagged'
 
     def get_queryset(self):
-        qs = super(TaggedListView, self).get_queryset()
+        qs = super().get_queryset()
         return self.optimize(qs.filter(tags__slug=self.kwargs['tag'], tags__language_code=self.request.LANGUAGE_CODE))
 
     def get_context_data(self, **kwargs):
