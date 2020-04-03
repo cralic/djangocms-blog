@@ -572,7 +572,7 @@ class BasePostPlugin(CMSPlugin):
             posts = posts.namespace(self.app_config.namespace)
         if self.current_site:
             posts = posts.on_site(get_current_site(request))
-        posts = posts.active_translations(language_code=language)
+        posts = posts.active_translations(language_code=language).translated(language_code=language)
         if (published_only or not request or not getattr(request, 'toolbar', False) or
             not request.toolbar.edit_mode):
             posts = posts.published(current_site=self.current_site)
