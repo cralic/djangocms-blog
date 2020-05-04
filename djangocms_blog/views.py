@@ -294,7 +294,7 @@ class CategoryEntriesView(BaseBlogListView, ListView):
 class PostAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         # Don't forget to filter out results depending on the visitor !
-        if not self.request.user.is_authenticated() or (
+        if not self.request.user.is_authenticated or (
                 not self.request.user.is_superuser and not self.request.user.has_perm('djangocms_blog.change_post')):
             return Post.objects.none()
 

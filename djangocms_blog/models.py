@@ -254,7 +254,7 @@ class Post(KnockerModel, BlogMetaMixin, TranslatableModel):
     """
     Blog post
     """
-    call_to_action = models.ForeignKey('CallToAction', verbose_name=_('Call to Action'), null=True, blank=True, related_name='djangocms_blog_post_cta')
+    call_to_action = models.ForeignKey('CallToAction', verbose_name=_('Call to Action'), null=True, blank=True, related_name='djangocms_blog_post_cta', on_delete=models.SET_NULL)
     author = models.ForeignKey(dj_settings.AUTH_USER_MODEL,
                                verbose_name=_('author'), null=True, blank=True,
                                related_name='djangocms_blog_post_author', on_delete=models.PROTECT)
