@@ -11,17 +11,21 @@ djangocms-blog implements some channels related features:
 
 For detailed information on channels setup, please refer to `channels documentation`_.
 
+.. warning:: liveblog does not currently work on django 2.0 and up
+
 .. _knocker:
 
 *************
 Notifications
 *************
 
-``djangocms-blog`` is integrated with `django-knocker`_ to provide real time desktop notifications.
+``djangocms-blog`` integrates `django-knocker`_ to provide real time desktop notifications.
 
 To enable notifications:
 
-* Add ``knocker`` application to ``INSTALLED_APPS`` together with channels::
+* Install **django-knocker** and **channels<2.0**
+
+* Add ``channels`` and ``knocker`` application to ``INSTALLED_APPS`` together with channels::
 
       INSTALLED_APPS = [
           ...

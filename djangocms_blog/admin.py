@@ -6,28 +6,23 @@ from copy import deepcopy
 from aldryn_apphooks_config.admin import BaseAppHookConfig, ModelAppHookConfig
 from cms.admin.placeholderadmin import FrontendEditableAdminMixin, PlaceholderAdminMixin
 from cms.models import CMSPlugin, ValidationError
-from django import forms
 from django.apps import apps
 from django.conf import settings
 from django.conf.urls import url
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.sites.models import Site
-from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.utils import timezone
 from django.utils.six import callable, text_type
-from django.utils.translation import get_language_from_request, ugettext_lazy as _
+from django.utils.translation import get_language_from_request, ugettext_lazy as _, ungettext as __
 from parler.admin import TranslatableAdmin
+from django.contrib import admin
 
 from .cms_appconfig import BlogConfig
 from .forms import CategoryAdminForm, PostAdminForm
-from .models import BlogCategory, Post
+from .models import BlogCategory, Post, CallToAction
 from .settings import get_setting
-
-try:
-    from admin_enhancer.admin import EnhancedModelAdminMixin
-except ImportError:
-    class EnhancedModelAdminMixin(object):
-        pass
 
 
 class SiteListFilter(admin.SimpleListFilter):
@@ -54,7 +49,7 @@ class SiteListFilter(admin.SimpleListFilter):
             raise admin.options.IncorrectLookupParameters(e)
 
 
-class BlogCategoryAdmin(EnhancedModelAdminMixin, ModelAppHookConfig, TranslatableAdmin):
+class BlogCategoryAdmin(ModelAppHookConfig, TranslatableAdmin):
     form = CategoryAdminForm
     list_display = [
         'name', 'parent', 'app_config', 'all_languages_column',
@@ -72,11 +67,15 @@ class BlogCategoryAdmin(EnhancedModelAdminMixin, ModelAppHookConfig, Translatabl
         }
 
 
+@admin.register(CallToAction)
+class CallToActionAdmin(admin.ModelAdmin):
+    pass
+
 class PostAdmin(PlaceholderAdminMixin, FrontendEditableAdminMixin,
                 ModelAppHookConfig, TranslatableAdmin):
     form = PostAdminForm
     list_display = [
-        'title_prop', 'author', 'date_published', 'app_config', 'all_languages_column',
+        'title', 'author', 'date_published', 'app_config', 'all_languages_column',
         'date_published_end'
     ]
     search_fields = ('translations__title',)
@@ -84,12 +83,23 @@ class PostAdmin(PlaceholderAdminMixin, FrontendEditableAdminMixin,
     raw_id_fields = ['author']
     frontend_editable_fields = ('title', 'abstract', 'post_text')
     enhance_exclude = ('main_image', 'tags')
+    actions = [
+        'make_published',
+        'make_unpublished',
+        'enable_comments',
+        'disable_comments',
+    ]
+    if apps.is_installed('djangocms_blog.liveblog'):
+        actions += ['enable_liveblog', 'disable_liveblog']
     _fieldsets = [
         (None, {
-            'fields': [['title', 'categories', 'publish', 'app_config', 'recommended', 'pinned']]
+            'fields': [
+                ['title', 'subtitle', 'publish'],
+                ['categories', 'app_config', 'recommended', 'pinned', 'call_to_action']
+            ]
         }),
-        (_('Related'), {
-            'fields': [['related', ]]
+        (None, {
+            'fields': [[]]
         }),
         (_('Info'), {
             'fields': [['slug', 'tags'],
@@ -111,6 +121,95 @@ class PostAdmin(PlaceholderAdminMixin, FrontendEditableAdminMixin,
         'default_published': 'publish'
     }
     _sites = None
+
+    # Bulk actions for post admin
+    def make_published(self, request, queryset):
+        """ Bulk action to mark selected posts as published. If
+            the date_published field is empty the current time is
+            saved as date_published.
+            queryset must not be empty (ensured by DjangoCMS).
+        """
+        cnt1 = queryset.filter(
+            date_published__isnull=True,
+            publish=False,
+        ).update(date_published=timezone.now(), publish=True)
+        cnt2 = queryset.filter(
+            date_published__isnull=False,
+            publish=False,
+        ).update(publish=True)
+        messages.add_message(
+            request, messages.INFO,
+            __('%(updates)d entry published.',
+                '%(updates)d entries published.', cnt1+cnt2) % {
+                'updates':  cnt1+cnt2, })
+
+    def make_unpublished(self, request, queryset):
+        """ Bulk action to mark selected posts as UNpublished.
+            queryset must not be empty (ensured by DjangoCMS).
+        """
+        updates = queryset.filter(publish=True)\
+            .update(publish=False)
+        messages.add_message(
+            request, messages.INFO,
+            __('%(updates)d entry unpublished.',
+                '%(updates)d entries unpublished.', updates) % {
+                'updates':  updates, })
+
+    def enable_comments(self, request, queryset):
+        """ Bulk action to enable comments for selected posts.
+            queryset must not be empty (ensured by DjangoCMS).
+        """
+        updates = queryset.filter(enable_comments=False)\
+            .update(enable_comments=True)
+        messages.add_message(
+            request, messages.INFO,
+            __('Comments for %(updates)d entry enabled.',
+                'Comments for %(updates)d entries enabled', updates) % {
+                'updates':  updates, })
+
+    def disable_comments(self, request, queryset):
+        """ Bulk action to disable comments for selected posts.
+            queryset must not be empty (ensured by DjangoCMS).
+        """
+        updates = queryset.filter(enable_comments=True)\
+            .update(enable_comments=False)
+        messages.add_message(
+            request, messages.INFO,
+            __('Comments for %(updates)d entry disabled.',
+               'Comments for %(updates)d entries disabled.', updates) % {
+                'updates':  updates, })
+
+    def enable_liveblog(self, request, queryset):
+        """ Bulk action to enable comments for selected posts.
+            queryset must not be empty (ensured by DjangoCMS).
+        """
+        updates = queryset.filter(enable_liveblog=False)\
+            .update(enable_liveblog=True)
+        messages.add_message(
+            request, messages.INFO,
+            __('Liveblog for %(updates)d entry enabled.',
+                'Liveblog for %(updates)d entries enabled.', updates) % {
+                'updates':  updates, })
+
+    def disable_liveblog(self, request, queryset):
+        """ Bulk action to disable comments for selected posts.
+            queryset must not be empty (ensured by DjangoCMS).
+        """
+        updates = queryset.filter(enable_liveblog=True)\
+            .update(enable_liveblog=False)
+        messages.add_message(
+            request, messages.INFO,
+            __('Liveblog for %(updates)d entry enabled.',
+               'Liveblog for %(updates)d entries enabled.') % {
+               'updates':  updates, })
+
+    # Make bulk action menu entries localizable
+    make_published.short_description = _("Publish selection")
+    make_unpublished.short_description = _("Unpublish selection")
+    enable_comments.short_description = _("Enable comments for selection")
+    disable_comments.short_description = _("Disable comments for selection ")
+    enable_liveblog.short_description = _("Enable liveblog for selection")
+    disable_liveblog.short_description = _("Disable liveblog for selection ")
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
@@ -175,16 +274,6 @@ class PostAdmin(PlaceholderAdminMixin, FrontendEditableAdminMixin,
             except KeyError:
                 return HttpResponseRedirect(reverse('djangocms_blog:posts-latest'))
 
-    def formfield_for_dbfield(self, db_field, **kwargs):
-        field = super(PostAdmin, self).formfield_for_dbfield(db_field, **kwargs)
-        if db_field.name == 'meta_description':
-            original_attrs = field.widget.attrs
-            original_attrs['maxlength'] = 160
-            field.widget = forms.TextInput(original_attrs)
-        elif db_field.name == 'meta_title':
-            field.max_length = 70
-        return field
-
     def has_restricted_sites(self, request):
         """
         Whether the current user has permission on one site only
@@ -238,15 +327,17 @@ class PostAdmin(PlaceholderAdminMixin, FrontendEditableAdminMixin,
 
         fsets = deepcopy(self._fieldsets)
         if config:
-            if config.use_abstract:
-                fsets[0][1]['fields'].append('abstract')
-            if not config.use_placeholder:
-                fsets[0][1]['fields'].append('post_text')
+            abstract = bool(config.use_abstract)
+            placeholder = bool(config.use_placeholder)
+            related = bool(config.use_related)
         else:
-            if get_setting('USE_ABSTRACT'):
-                fsets[0][1]['fields'].append('abstract')
-            if not get_setting('USE_PLACEHOLDER'):
-                fsets[0][1]['fields'].append('post_text')
+            abstract = get_setting('USE_ABSTRACT')
+            placeholder = get_setting('USE_PLACEHOLDER')
+            related = get_setting('USE_RELATED')
+        if abstract:
+            fsets[0][1]['fields'].append('abstract')
+        if not placeholder:
+            fsets[0][1]['fields'].append('post_text')
         if get_setting('MULTISITE') and not self.has_restricted_sites(request):
             fsets[1][1]['fields'][0].append('sites')
         if request.user.is_superuser:
@@ -254,6 +345,8 @@ class PostAdmin(PlaceholderAdminMixin, FrontendEditableAdminMixin,
         if apps.is_installed('djangocms_blog.liveblog'):
             fsets[2][1]['fields'][2].append('enable_liveblog')
         filter_function = get_setting('ADMIN_POST_FIELDSET_FILTER')
+        if related and Post.objects.namespace(config.namespace).active_translations().exists():
+            fsets[1][1]['fields'][0].append('related')
         if callable(filter_function):
             fsets = filter_function(fsets, request, obj=obj)
         return fsets
@@ -312,13 +405,14 @@ class BlogConfigAdmin(BaseAppHookConfig, TranslatableAdmin):
             (_('Generic'), {
                 'fields': (
                     'config.default_published', 'config.use_placeholder', 'config.use_abstract',
-                    'config.set_author',
+                    'config.set_author', 'config.use_related',
                 )
             }),
             (_('Layout'), {
                 'fields': (
                     'config.paginate_by', 'config.url_patterns', 'config.template_prefix',
                     'config.menu_structure', 'config.menu_empty_categories',
+                    ('config.default_image_full', 'config.default_image_thumbnail'),
                 ),
                 'classes': ('collapse',)
             }),

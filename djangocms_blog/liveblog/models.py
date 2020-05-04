@@ -2,13 +2,16 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import json
+from operator import itemgetter
 
 import django
 from channels import Group
-from cms.models import CMSPlugin, itemgetter, now, python_2_unicode_compatible
+from cms.models import CMSPlugin
 from cms.utils.plugins import reorder_plugins
 from django.db import models
 from django.template import Context
+from django.utils.six import python_2_unicode_compatible
+from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
 from djangocms_text_ckeditor.models import AbstractText
 from filer.fields.image import FilerImageField
@@ -63,10 +66,14 @@ class LiveblogInterface(models.Model):
         })
         try:
             from cms.plugin_rendering import ContentRenderer
-            context['cms_content_renderer'] = ContentRenderer(request)
+            renderer = ContentRenderer(request)
+            return renderer.render_plugin(
+                instance=self,
+                context=context,
+                placeholder=self.placeholder,
+            )
         except ImportError:
-            pass
-        return self.render_plugin(context)
+            return self.render_plugin(context)
 
     def send(self, request):
         """

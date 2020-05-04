@@ -14,11 +14,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='blogcategorytranslation',
-            name='meta_description',
-            field=models.TextField(blank=True, default='', verbose_name='post meta description'),
-        ),
-        migrations.AddField(
-            model_name='blogcategorytranslation',
             name='meta_keywords',
             field=models.TextField(blank=True, default='', verbose_name='post meta keywords'),
         ),
