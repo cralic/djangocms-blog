@@ -176,6 +176,8 @@ class PostArchiveView(BaseBlogListView, ListView):
 
 
 class RecommendedPostsView(PostListView):
+    view_url_name = 'djangocms_blog:posts-recommended'
+
     def get_queryset(self):
         qs = super().get_queryset().filter(recommended=True).order_by('-date_published')
         self.count = qs.count()
@@ -192,6 +194,8 @@ class RecommendedPostsView(PostListView):
 
 
 class MostReadPostsView(PostListView):
+    view_url_name = 'djangocms_blog:posts-most-read'
+
     def get_queryset(self):
         qs = super().get_queryset()
         qs = sorted(qs, key=lambda x: x.get_hits(), reverse=True)
@@ -209,6 +213,8 @@ class MostReadPostsView(PostListView):
 
 
 class FavouritesPostsView(PostListView):
+    view_url_name = 'djangocms_blog:posts-newest'
+
     def get_queryset(self):
         qs = super().get_queryset().order_by('-date_created')
         self.count = qs.count()
