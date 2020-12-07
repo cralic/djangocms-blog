@@ -41,6 +41,11 @@ class BlogLatestEntriesPlugin(BlogPlugin):
     cache = False
     base_render_template = 'latest_entries.html'
 
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        form.request = request
+        return form
+
     def render(self, context, instance, placeholder):
         context = super(BlogLatestEntriesPlugin, self).render(context, instance, placeholder)
         context['posts_list'] = instance.get_posts(context['request'], published_only=False)
@@ -59,6 +64,11 @@ class BlogLatestEntriesPluginCached(BlogPlugin):
     fields = ['app_config', 'latest_posts', 'tags', 'categories'] + \
              ['template_folder'] if len(get_setting('PLUGIN_TEMPLATE_FOLDERS')) > 1 else []
     base_render_template = 'latest_entries.html'
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        form.request = request
+        return form
 
     def render(self, context, instance, placeholder):
         context = super(BlogLatestEntriesPluginCached, self).render(context, instance, placeholder)

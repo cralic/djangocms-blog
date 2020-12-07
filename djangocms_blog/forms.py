@@ -73,6 +73,7 @@ class LatestEntriesForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(LatestEntriesForm, self).__init__(*args, **kwargs)
         self.fields['tags'].widget = TagAutoSuggest('taggit.Tag')
+        self.fields['tags'].widget.language_code = self.request.GET.get('language', self.request.LANGUAGE_CODE)
 
     class Media:
         css = {
