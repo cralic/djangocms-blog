@@ -646,8 +646,7 @@ class LatestPostsPlugin(BasePostPlugin):
         return force_text(_('%s latest articles by tag') % self.latest_posts)
 
     def copy_relations(self, oldinstance):
-        for tag in oldinstance.tags.all():
-            self.tags.add(tag)
+        self.tags.add(self.language, oldinstance.tags.all())
         for category in oldinstance.categories.all():
             self.categories.add(category)
 
