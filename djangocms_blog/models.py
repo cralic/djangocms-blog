@@ -270,6 +270,11 @@ class Post(KnockerModel, BlogMetaMixin, TranslatableModel):
     main_image = FilerImageField(verbose_name=_('main image'), blank=True, null=True,
                                  on_delete=models.SET_NULL,
                                  related_name='djangocms_blog_post_image')
+    main_mobile_image = FilerImageField(
+        verbose_name=_('main mobile image'), blank=True, null=True,
+        on_delete=models.SET_NULL,
+        related_name='djangocms_blog_post_mobile_image'
+    )
     main_image_thumbnail = models.ForeignKey(thumbnail_model,
                                              verbose_name=_('main image thumbnail'),
                                              related_name='djangocms_blog_post_thumbnail',
