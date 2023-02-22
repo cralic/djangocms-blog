@@ -141,7 +141,7 @@ class PostDetailView(TranslatableSlugMixin, BaseBlogView, DetailView):
     def get_context_data(self, **kwargs):
         context = super(PostDetailView, self).get_context_data(**kwargs)
         context.update({'hreflangs': self.get_href_lang(self.object)})
-        context['meta'] = self.get_object().as_meta()
+        context['meta'] = self.get_object().as_meta(self.request)
         context['instant_article'] = self.instant_article
         context['use_placeholder'] = get_setting('USE_PLACEHOLDER')
         setattr(self.request, get_setting('CURRENT_POST_IDENTIFIER'), self.get_object())
@@ -293,7 +293,7 @@ class CategoryEntriesView(BaseBlogListView, ListView):
         kwargs['category'] = self.category
         context = super(CategoryEntriesView, self).get_context_data(**kwargs)
         context.update({'hreflangs': self.get_href_lang(self.category)})
-        context['meta'] = self.category.as_meta()
+        context['meta'] = self.category.as_meta(self.request)
         return context
 
 
