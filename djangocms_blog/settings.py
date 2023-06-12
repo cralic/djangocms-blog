@@ -93,8 +93,6 @@ def get_setting(name):
         'BLOG_TWITTER_TYPES': getattr(settings, 'BLOG_TWITTER_TYPES', meta_settings.TWITTER_TYPES),
         'BLOG_TWITTER_SITE': getattr(settings, 'BLOG_TWITTER_SITE', meta_settings.TWITTER_SITE),
         'BLOG_TWITTER_AUTHOR': getattr(settings, 'BLOG_TWITTER_AUTHOR', 'get_author_twitter'),
-        'BLOG_GPLUS_TYPE': getattr(settings, 'BLOG_GPLUS_TYPE', 'Blog'),
-        'BLOG_GPLUS_AUTHOR': getattr(settings, 'BLOG_GPLUS_AUTHOR', 'get_author_gplus'),
         'BLOG_ENABLE_COMMENTS': getattr(settings, 'BLOG_ENABLE_COMMENTS', True),
         'BLOG_USE_ABSTRACT': getattr(settings, 'BLOG_USE_ABSTRACT', True),
         'BLOG_USE_PLACEHOLDER': getattr(settings, 'BLOG_USE_PLACEHOLDER', True),

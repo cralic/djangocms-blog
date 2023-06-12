@@ -14,10 +14,10 @@ from django.contrib.sites.models import Site
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.six import callable, text_type
 from django.utils.translation import get_language_from_request, gettext_lazy as _, ngettext as __
 from parler.admin import TranslatableAdmin
 from django.contrib import admin
+from six import text_type
 
 from .cms_appconfig import BlogConfig
 from .forms import CategoryAdminForm, PostAdminForm
