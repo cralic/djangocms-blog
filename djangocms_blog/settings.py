@@ -15,7 +15,7 @@ PERMALINK_TYPE_SLUG = 'slug'
 
 def get_setting(name):
     from django.conf import settings
-    from django.utils.translation import ugettext_lazy as _
+    from django.utils.translation import gettext_lazy as _
     from meta import settings as meta_settings
 
     PERMALINKS = (
@@ -94,7 +94,6 @@ def get_setting(name):
         'BLOG_TWITTER_SITE': getattr(settings, 'BLOG_TWITTER_SITE', meta_settings.TWITTER_SITE),
         'BLOG_TWITTER_AUTHOR': getattr(settings, 'BLOG_TWITTER_AUTHOR', 'get_author_twitter'),
         'BLOG_GPLUS_TYPE': getattr(settings, 'BLOG_GPLUS_TYPE', 'Blog'),
-        'BLOG_GPLUS_TYPES': getattr(settings, 'BLOG_GPLUS_TYPES', meta_settings.GPLUS_TYPES),
         'BLOG_GPLUS_AUTHOR': getattr(settings, 'BLOG_GPLUS_AUTHOR', 'get_author_gplus'),
         'BLOG_ENABLE_COMMENTS': getattr(settings, 'BLOG_ENABLE_COMMENTS', True),
         'BLOG_USE_ABSTRACT': getattr(settings, 'BLOG_USE_ABSTRACT', True),

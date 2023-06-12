@@ -8,14 +8,14 @@ from cms.admin.placeholderadmin import FrontendEditableAdminMixin, PlaceholderAd
 from cms.models import CMSPlugin, ValidationError
 from django.apps import apps
 from django.conf import settings
-from django.conf.urls import url
+from django.urls import re_path
 from django.contrib import admin, messages
 from django.contrib.sites.models import Site
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.six import callable, text_type
-from django.utils.translation import get_language_from_request, ugettext_lazy as _, ungettext as __
+from django.utils.translation import get_language_from_request, gettext_lazy as _, ngettext as __
 from parler.admin import TranslatableAdmin
 from django.contrib import admin
 
@@ -49,6 +49,7 @@ class SiteListFilter(admin.SimpleListFilter):
             raise admin.options.IncorrectLookupParameters(e)
 
 
+@admin.register(BlogCategory)
 class BlogCategoryAdmin(ModelAppHookConfig, TranslatableAdmin):
     form = CategoryAdminForm
     list_display = [
@@ -71,6 +72,7 @@ class BlogCategoryAdmin(ModelAppHookConfig, TranslatableAdmin):
 class CallToActionAdmin(admin.ModelAdmin):
     pass
 
+@admin.register(Post)
 class PostAdmin(PlaceholderAdminMixin, FrontendEditableAdminMixin,
                 ModelAppHookConfig, TranslatableAdmin):
     form = PostAdminForm
@@ -123,6 +125,9 @@ class PostAdmin(PlaceholderAdminMixin, FrontendEditableAdminMixin,
     _sites = None
 
     # Bulk actions for post admin
+    @admin.action(
+        description=_("Publish selection")
+    )
     def make_published(self, request, queryset):
         """ Bulk action to mark selected posts as published. If
             the date_published field is empty the current time is
@@ -143,6 +148,9 @@ class PostAdmin(PlaceholderAdminMixin, FrontendEditableAdminMixin,
                 '%(updates)d entries published.', cnt1+cnt2) % {
                 'updates':  cnt1+cnt2, })
 
+    @admin.action(
+        description=_("Unpublish selection")
+    )
     def make_unpublished(self, request, queryset):
         """ Bulk action to mark selected posts as UNpublished.
             queryset must not be empty (ensured by DjangoCMS).
@@ -155,6 +163,9 @@ class PostAdmin(PlaceholderAdminMixin, FrontendEditableAdminMixin,
                 '%(updates)d entries unpublished.', updates) % {
                 'updates':  updates, })
 
+    @admin.action(
+        description=_("Enable comments for selection")
+    )
     def enable_comments(self, request, queryset):
         """ Bulk action to enable comments for selected posts.
             queryset must not be empty (ensured by DjangoCMS).
@@ -167,6 +178,9 @@ class PostAdmin(PlaceholderAdminMixin, FrontendEditableAdminMixin,
                 'Comments for %(updates)d entries enabled', updates) % {
                 'updates':  updates, })
 
+    @admin.action(
+        description=_("Disable comments for selection ")
+    )
     def disable_comments(self, request, queryset):
         """ Bulk action to disable comments for selected posts.
             queryset must not be empty (ensured by DjangoCMS).
@@ -179,6 +193,9 @@ class PostAdmin(PlaceholderAdminMixin, FrontendEditableAdminMixin,
                'Comments for %(updates)d entries disabled.', updates) % {
                 'updates':  updates, })
 
+    @admin.action(
+        description=_("Enable liveblog for selection")
+    )
     def enable_liveblog(self, request, queryset):
         """ Bulk action to enable comments for selected posts.
             queryset must not be empty (ensured by DjangoCMS).
@@ -191,6 +208,9 @@ class PostAdmin(PlaceholderAdminMixin, FrontendEditableAdminMixin,
                 'Liveblog for %(updates)d entries enabled.', updates) % {
                 'updates':  updates, })
 
+    @admin.action(
+        description=_("Disable liveblog for selection ")
+    )
     def disable_liveblog(self, request, queryset):
         """ Bulk action to disable comments for selected posts.
             queryset must not be empty (ensured by DjangoCMS).
@@ -204,12 +224,6 @@ class PostAdmin(PlaceholderAdminMixin, FrontendEditableAdminMixin,
                'updates':  updates, })
 
     # Make bulk action menu entries localizable
-    make_published.short_description = _("Publish selection")
-    make_unpublished.short_description = _("Unpublish selection")
-    enable_comments.short_description = _("Enable comments for selection")
-    disable_comments.short_description = _("Disable comments for selection ")
-    enable_liveblog.short_description = _("Enable liveblog for selection")
-    disable_liveblog.short_description = _("Disable liveblog for selection ")
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
@@ -236,7 +250,7 @@ class PostAdmin(PlaceholderAdminMixin, FrontendEditableAdminMixin,
         Customize the modeladmin urls
         """
         urls = [
-            url(r'^publish/([0-9]+)/$', self.admin_site.admin_view(self.publish_post),
+            re_path(r'^publish/([0-9]+)/$', self.admin_site.admin_view(self.publish_post),
                 name='djangocms_blog_publish_article'),
         ]
         urls.extend(super(PostAdmin, self).get_urls())
@@ -270,7 +284,7 @@ class PostAdmin(PlaceholderAdminMixin, FrontendEditableAdminMixin,
             return HttpResponseRedirect(post.get_absolute_url(language))
         except Exception:
             try:
-                return HttpResponseRedirect(request.META['HTTP_REFERER'])
+                return HttpResponseRedirect(request.headers['referer'])
             except KeyError:
                 return HttpResponseRedirect(reverse('djangocms_blog:posts-latest'))
 
@@ -389,6 +403,7 @@ class PostAdmin(PlaceholderAdminMixin, FrontendEditableAdminMixin,
         }
 
 
+@admin.register(BlogConfig)
 class BlogConfigAdmin(BaseAppHookConfig, TranslatableAdmin):
     @property
     def declared_fieldsets(self):
@@ -470,6 +485,3 @@ class BlogConfigAdmin(BaseAppHookConfig, TranslatableAdmin):
         return super(BlogConfigAdmin, self).save_model(request, obj, form, change)
 
 
-admin.site.register(BlogCategory, BlogCategoryAdmin)
-admin.site.register(Post, PostAdmin)
-admin.site.register(BlogConfig, BlogConfigAdmin)

@@ -8,7 +8,7 @@ from cms.wizards.wizard_base import Wizard
 from cms.wizards.wizard_pool import AlreadyRegisteredException, wizard_pool
 from django import forms
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from .cms_appconfig import BlogConfig
 from .fields import slugify

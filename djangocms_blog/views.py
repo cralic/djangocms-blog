@@ -14,13 +14,13 @@ from django.db import transaction
 from django.http import HttpResponseBadRequest, HttpResponse, JsonResponse, Http404
 from django.db.models import Q
 from django.urls import reverse
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.timezone import now
 from django.utils.translation import get_language
 from django.views.generic import DetailView, ListView
 from parler.views import TranslatableSlugMixin, ViewUrlMixin
 from django.shortcuts import get_object_or_404
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from .models import BlogCategory, Post
 from taggit.models import Tag
@@ -322,7 +322,7 @@ def copy_language(request, post_id):
 
     if not target_language or target_language not in get_language_list():
         return HttpResponseBadRequest(
-            force_text(_("Language must be set to a supported language!"))
+            force_str(_("Language must be set to a supported language!"))
         )
 
     placeholders = []

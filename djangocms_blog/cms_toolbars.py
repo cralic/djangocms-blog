@@ -7,7 +7,7 @@ from cms.toolbar_pool import toolbar_pool
 from cms.utils.i18n import get_language_dict
 from cms.utils.urlutils import admin_reverse
 from django.urls import reverse
-from django.utils.translation import override, ugettext_lazy as _
+from django.utils.translation import override, gettext_lazy as _
 
 from .settings import get_setting
 

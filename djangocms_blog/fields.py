@@ -10,13 +10,8 @@ __all__ = ['AutoSlugField']
 
 class AutoSlugField(SlugField):
     def __init__(self, *args, **kwargs):
-        if django.VERSION < (1, 9):
-            self.allow_unicode = kwargs.pop('allow_unicode', False)
         super(AutoSlugField, self).__init__(*args, **kwargs)
 
 
 def slugify(base):
-    if django.VERSION >= (1, 9):
-        return django_slugify(base, allow_unicode=True)
-    else:
-        return django_slugify(base)
+    return django_slugify(base, allow_unicode=True)

@@ -16,10 +16,10 @@ from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.encoding import force_bytes, force_text, python_2_unicode_compatible
+from django.utils.encoding import force_bytes, force_str
 from django.utils.functional import cached_property
 from django.utils.html import escape, strip_tags
-from django.utils.translation import get_language, ugettext, ugettext_lazy as _
+from django.utils.translation import get_language, gettext, gettext_lazy as _
 from djangocms_text_ckeditor.fields import HTMLField
 from filer.fields.image import FilerImageField
 from filer.models import ThumbnailOption
@@ -73,7 +73,7 @@ class BlogMetaMixin(ModelMeta):
         return self.build_absolute_uri(self.get_absolute_url())
 
 
-@python_2_unicode_compatible
+
 class BlogCategory(BlogMetaMixin, TranslatableModel):
     """
     Blog category
@@ -213,7 +213,7 @@ class BlogCategory(BlogMetaMixin, TranslatableModel):
         )
 
     def __str__(self):
-        default = ugettext('BlogCategory (no translation)')
+        default = gettext('BlogCategory (no translation)')
         return self.safe_translation_getter('name', any_language=True, default=default)
 
     def save(self, *args, **kwargs):
@@ -221,7 +221,7 @@ class BlogCategory(BlogMetaMixin, TranslatableModel):
         for lang in self.get_available_languages():
             self.set_current_language(lang)
             if not self.slug and self.name:
-                self.slug = slugify(force_text(self.name))
+                self.slug = slugify(force_str(self.name))
         self.save_translations()
 
     def get_title(self):
@@ -249,7 +249,7 @@ class CallToAction(models.Model):
     def __str__(self):
         return self.title
 
-@python_2_unicode_compatible
+
 class Post(KnockerModel, BlogMetaMixin, TranslatableModel):
     """
     Blog post
@@ -383,7 +383,7 @@ class Post(KnockerModel, BlogMetaMixin, TranslatableModel):
         get_latest_by = 'date_published'
 
     def __str__(self):
-        default = ugettext('Post (no translation)')
+        default = gettext('Post (no translation)')
         return self.safe_translation_getter('title', any_language=True, default=default)
 
     @property
@@ -634,7 +634,7 @@ class BasePostPlugin(CMSPlugin):
         return self.optimize(posts.all())
 
 
-@python_2_unicode_compatible
+
 class LatestPostsPlugin(BasePostPlugin):
     latest_posts = models.IntegerField(_('articles'), default=get_setting('LATEST_POSTS'),
                                        help_text=_('The number of latests '
@@ -648,7 +648,7 @@ class LatestPostsPlugin(BasePostPlugin):
                                                     'with chosen categories.'))
 
     def __str__(self):
-        return force_text(_('%s latest articles by tag') % self.latest_posts)
+        return force_str(_('%s latest articles by tag') % self.latest_posts)
 
     def copy_relations(self, oldinstance):
         self.tags.add(self.language, oldinstance.tags.all())
@@ -664,14 +664,14 @@ class LatestPostsPlugin(BasePostPlugin):
         return self.optimize(posts.distinct())[:self.latest_posts]
 
 
-@python_2_unicode_compatible
+
 class MostReadPlugin(BasePostPlugin):
     most_read_posts = models.IntegerField(_('articles'), default=get_setting('LATEST_POSTS'),
                                           help_text=_('The number of latests '
                                                       'articles to be displayed.'))
 
     def __str__(self):
-        return force_text(_('%s most read articles by tag') % self.most_read_posts)
+        return force_str(_('%s most read articles by tag') % self.most_read_posts)
 
     def get_posts(self, request, published_only=True):
         posts = self.post_queryset(request, published_only).distinct()
@@ -679,7 +679,7 @@ class MostReadPlugin(BasePostPlugin):
         return posts[:self.most_read_posts]
 
 
-@python_2_unicode_compatible
+
 class AuthorEntriesPlugin(BasePostPlugin):
     authors = models.ManyToManyField(
         dj_settings.AUTH_USER_MODEL, verbose_name=_('authors'),
@@ -691,7 +691,7 @@ class AuthorEntriesPlugin(BasePostPlugin):
     )
 
     def __str__(self):
-        return force_text(_('%s latest articles by author') % self.latest_posts)
+        return force_str(_('%s latest articles by author') % self.latest_posts)
 
     def copy_relations(self, oldinstance):
         self.authors.set(oldinstance.authors.all())
@@ -717,13 +717,13 @@ class AuthorEntriesPlugin(BasePostPlugin):
         return authors
 
 
-@python_2_unicode_compatible
+
 class GenericBlogPlugin(BasePostPlugin):
     class Meta:
         abstract = False
 
     def __str__(self):
-        return force_text(_('generic blog plugin'))
+        return force_str(_('generic blog plugin'))
 
 
 @receiver(pre_delete, sender=Post)

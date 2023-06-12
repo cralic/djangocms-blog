@@ -6,7 +6,7 @@ from aldryn_apphooks_config.utils import setup_config
 from app_data import AppDataForm
 from django import forms
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from filer.models import ThumbnailOption
 from parler.models import TranslatableModel, TranslatedFields
 
