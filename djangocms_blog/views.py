@@ -23,6 +23,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _
 
 from .models import BlogCategory, Post
+from .utils import is_ajax
 from taggit.models import Tag
 from .settings import get_setting
 from django.conf import settings
@@ -181,7 +182,7 @@ class RecommendedPostsView(PostListView):
     def get_queryset(self):
         qs = super().get_queryset().filter(recommended=True).order_by('-date_published')
         self.count = qs.count()
-        if self.request.is_ajax():
+        if is_ajax(self.request):
             qs = qs[self.get_offset(self.request):(self.get_offset(self.request) + self.get_limit(self.request))]
         return qs
 
@@ -200,7 +201,7 @@ class MostReadPostsView(PostListView):
         qs = super().get_queryset()
         qs = sorted(qs, key=lambda x: x.get_hits(), reverse=True)
         self.count = qs
-        if self.request.is_ajax():
+        if is_ajax(self.request):
             qs = qs[self.get_offset(self.request):(self.get_offset(self.request) + self.get_limit(self.request))]
         return qs
 
@@ -218,7 +219,7 @@ class FavouritesPostsView(PostListView):
     def get_queryset(self):
         qs = super().get_queryset().order_by('-date_created')
         self.count = qs.count()
-        if self.request.is_ajax():
+        if is_ajax(self.request):
             qs = qs[self.get_offset(self.request):(self.get_offset(self.request) + self.get_limit(self.request))]
         return qs
 
