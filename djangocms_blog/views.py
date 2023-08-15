@@ -236,7 +236,7 @@ class TaggedListView(BaseBlogListView, ListView):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        return self.optimize(qs.filter(tags__slug=self.kwargs['tag']))
+        return self.optimize(qs.filter(slug=self.kwargs['tag'], language_code=self.request.LANGUAGE_CODE))
 
     def get_context_data(self, **kwargs):
         kwargs['tagged_entries'] = (self.kwargs.get('tag')
