@@ -63,7 +63,10 @@ class TaggedFilterItem(object):
         tag_ids = self._taglist(other_model, queryset)
         kwargs = {}
         if published:
-            kwargs = TaggedItem.bulk_lookup_kwargs(self.model.objects.published())
+            kwargs = {
+                'object_id__in': self.model.objects.published(),
+                'content_type': ContentType.objects.get_for_model(self.model),
+            }
         kwargs['tag_id__in'] = tag_ids
         counted_tags = dict(TaggedItem.objects
                                       .filter(**kwargs)
